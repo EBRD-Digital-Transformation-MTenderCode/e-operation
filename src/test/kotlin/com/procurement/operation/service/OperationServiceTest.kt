@@ -171,7 +171,6 @@ class OperationServiceTest {
     @Test
     @DisplayName("startOperation - PersistenceException")
     fun getOperationTx8() {
-        println(genAccessJWT())
         val request = MockHttpServletRequest().also {
             it.addHeader(HEADER_NAME_AUTHORIZATION, AUTHORIZATION_PREFIX_BEARER + genAccessJWT())
         }
@@ -309,7 +308,6 @@ class OperationServiceTest {
     @Test
     @DisplayName("checkOperationTx - MissingOperationIdException")
     fun checkOperationTx8() {
-        println(genAccessJWT())
         val request = MockHttpServletRequest().also {
             it.addHeader(HEADER_NAME_AUTHORIZATION, AUTHORIZATION_PREFIX_BEARER + genAccessJWT())
         }
@@ -326,7 +324,6 @@ class OperationServiceTest {
     @Test
     @DisplayName("checkOperationTx - OperationIdNotFoundException")
     fun checkOperationTx9() {
-        println(genAccessJWT())
         val request = MockHttpServletRequest().also {
             it.addHeader(HEADER_NAME_AUTHORIZATION, AUTHORIZATION_PREFIX_BEARER + genAccessJWT())
             it.addHeader(HEADER_NAME_OPERATION_ID, OPERATION_ID)
@@ -347,7 +344,6 @@ class OperationServiceTest {
     @Test
     @DisplayName("checkOperationTx - PersistenceException")
     fun checkOperationTx10() {
-        println(genAccessJWT())
         val request = MockHttpServletRequest().also {
             it.addHeader(HEADER_NAME_AUTHORIZATION, AUTHORIZATION_PREFIX_BEARER + genAccessJWT())
             it.addHeader(HEADER_NAME_OPERATION_ID, OPERATION_ID)
@@ -369,7 +365,6 @@ class OperationServiceTest {
     @Test
     @DisplayName("checkOperationTx - do not match platform id")
     fun checkOperationTx11() {
-        println(genAccessJWT())
         val request = MockHttpServletRequest().also {
             it.addHeader(HEADER_NAME_AUTHORIZATION, AUTHORIZATION_PREFIX_BEARER + genAccessJWT())
             it.addHeader(HEADER_NAME_OPERATION_ID, OPERATION_ID)
