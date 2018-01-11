@@ -29,8 +29,12 @@ class CassandraConfiguration(
 
     private fun cassandraCluster(): Cluster {
         val builder = Cluster.builder()
-            .withClusterName(cassandraProperties.clusterName)
-            .withPort(cassandraProperties.port)
+
+        cassandraProperties.clusterName?.also {
+            builder.withClusterName(cassandraProperties.clusterName)
+        }
+
+        builder.withPort(cassandraProperties.port)
 
         cassandraProperties.username?.also {
             builder.withCredentials(cassandraProperties.username, cassandraProperties.password)
