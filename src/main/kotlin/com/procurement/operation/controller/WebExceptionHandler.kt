@@ -1,5 +1,7 @@
 package com.procurement.operation.controller
 
+import com.procurement.operation.exception.InvalidOperationIdException
+import com.procurement.operation.exception.InvalidPlatformIdException
 import com.procurement.operation.exception.MissingOperationIdException
 import com.procurement.operation.exception.OperationIdNotFoundException
 import com.procurement.operation.exception.database.PersistenceException
@@ -44,8 +46,9 @@ class WebExceptionHandler : ResponseEntityExceptionHandler() {
     fun invalidBearerTokenException(e: InvalidBearerTokenException): ResponseEntity<*> {
         log.debug("Invalid authentication type, requires a 'Bearer' authentication type.", e)
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED.value())
-            .header(HEADER_NAME_WWW_AUTHENTICATE,
-                    """$BEARER_REALM, error_code="invalid_token", error_message="The access token is invalid""""
+            .header(
+                HEADER_NAME_WWW_AUTHENTICATE,
+                """$BEARER_REALM, error_code="invalid_token", error_message="The access token is invalid""""
             )
             .build<Any>()
     }
@@ -65,8 +68,9 @@ class WebExceptionHandler : ResponseEntityExceptionHandler() {
     fun missingPlatformIdException(e: MissingPlatformIdException): ResponseEntity<*> {
         log.debug("Missing platform id.", e)
         return ResponseEntity.status(HttpStatus.BAD_REQUEST.value())
-            .header(HEADER_NAME_WWW_AUTHENTICATE,
-                    """$BEARER_REALM, error_code="invalid_request", error_message="Missing platform id""""
+            .header(
+                HEADER_NAME_WWW_AUTHENTICATE,
+                """$BEARER_REALM, error_code="invalid_request", error_message="Missing platform id""""
             )
             .build<Any>()
     }
@@ -76,6 +80,19 @@ class WebExceptionHandler : ResponseEntityExceptionHandler() {
         log.debug("Missing operation id.", e)
         return ResponseEntity.status(HttpStatus.BAD_REQUEST.value()).build<Any>()
     }
+
+    @ExceptionHandler(value = [InvalidPlatformIdException::class])
+    fun invalidPlatformIdException(e: InvalidPlatformIdException): ResponseEntity<*> {
+        log.debug("Invalid platform id.", e)
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST.value()).build<Any>()
+    }
+
+    @ExceptionHandler(value = [InvalidOperationIdException::class])
+    fun invalidOperationIdException(e: InvalidOperationIdException): ResponseEntity<*> {
+        log.debug("Invalid operation id.", e)
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST.value()).build<Any>()
+    }
+
 
     @ExceptionHandler(value = [OperationIdNotFoundException::class])
     fun operationIdNotFoundException(e: OperationIdNotFoundException): ResponseEntity<*> {
