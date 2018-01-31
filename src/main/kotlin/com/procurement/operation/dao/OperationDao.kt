@@ -34,7 +34,7 @@ class OperationDaoImpl(private val session: Session) : OperationDao {
     override fun getOperationTX(operationId: UUID): OperationTX? {
         val select = QueryBuilder.select()
             .from(KEY_SPACE, OPERATION_TABLE)
-            .where(eq(OPERATION_ID_FIELD, operationId.toString()))
+            .where(eq(OPERATION_ID_FIELD, operationId))
 
         return session.execute(select)
             .one()

@@ -2,6 +2,8 @@ package com.procurement.operation.service
 
 import com.auth0.jwt.interfaces.DecodedJWT
 import com.procurement.operation.dao.OperationDao
+import com.procurement.operation.exception.InvalidOperationIdException
+import com.procurement.operation.exception.InvalidPlatformIdException
 import com.procurement.operation.exception.MissingOperationIdException
 import com.procurement.operation.exception.OperationIdNotFoundException
 import com.procurement.operation.exception.database.PersistenceException
@@ -44,7 +46,11 @@ class OperationServiceImpl(
         if (platformId.isNull) {
             throw MissingPlatformIdException(context)
         }
-        return UUID.fromString(platformId.asString())
+        return try {
+            UUID.fromString(platformId.asString())
+        } catch (ex: Exception) {
+            throw InvalidPlatformIdException(context, ex)
+        }
     }
 
     private fun OperationTX.persist(context: RequestContext) = try {
@@ -55,13 +61,16 @@ class OperationServiceImpl(
 
     private fun getOperationTX(context: RequestContext, operationId: UUID): OperationTX = try {
         operationDao.getOperationTX(operationId)
-            ?: throw OperationIdNotFoundException(context = context)
     } catch (ex: Exception) {
         throw PersistenceException(context = context, cause = ex)
-    }
+    } ?: throw OperationIdNotFoundException(context = context)
 
     private fun RequestContext.getOperationIdFromHeader(): UUID =
         this.request.getHeader(HEADER_NAME_OPERATION_ID)?.let {
-            UUID.fromString(it)
+            try {
+                UUID.fromString(it)
+            } catch (ex: Exception) {
+                throw InvalidOperationIdException(this, ex)
+            }
         } ?: throw MissingOperationIdException(this)
 }
