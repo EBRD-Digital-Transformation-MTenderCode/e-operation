@@ -11,7 +11,7 @@ import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.util.*
 
-fun genAccessToken(platformId: UUID, expiresOn: Date, algorithm: Algorithm): String =
+fun genAccessToken(platformId: String, expiresOn: Date, algorithm: Algorithm): String =
     genToken(
         claims = mapOf<String, Any>(CLAIM_NAME_PLATFORM_ID to platformId),
         header = mapOf<String, Any>(HEADER_NAME_TOKEN_TYPE to ACCESS_TOKEN_TYPE),
@@ -19,7 +19,7 @@ fun genAccessToken(platformId: UUID, expiresOn: Date, algorithm: Algorithm): Str
         algorithm = algorithm
     )
 
-fun genRefreshToken(platformId: UUID, expiresOn: Date, algorithm: Algorithm): String =
+fun genRefreshToken(platformId: String, expiresOn: Date, algorithm: Algorithm): String =
     genToken(
         claims = mapOf<String, Any>(CLAIM_NAME_PLATFORM_ID to platformId),
         header = mapOf<String, Any>(HEADER_NAME_TOKEN_TYPE to REFRESH_TOKEN_TYPE),

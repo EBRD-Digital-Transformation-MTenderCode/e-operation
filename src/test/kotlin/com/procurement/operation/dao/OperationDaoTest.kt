@@ -80,7 +80,7 @@ class OperationDaoTest {
     }
 
     private fun getOperationCheckSql(selectCapture: KArgumentCaptor<Statement>) {
-        val template = "SELECT * FROM ocds.operations WHERE id='$OPERATION_ID';"
+        val template = "SELECT * FROM ocds.operations WHERE id=$OPERATION_ID;"
         assertEquals(template, selectCapture.firstValue.toString())
     }
 }

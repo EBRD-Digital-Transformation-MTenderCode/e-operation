@@ -5,6 +5,7 @@ import com.nhaarman.mockito_kotlin.any
 import com.nhaarman.mockito_kotlin.doThrow
 import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.whenever
+import com.procurement.operation.exception.InvalidPlatformIdException
 import com.procurement.operation.exception.database.PersistenceException
 import com.procurement.operation.exception.security.InvalidAuthHeaderTypeException
 import com.procurement.operation.exception.security.NoSuchAuthHeaderException
@@ -53,8 +54,9 @@ class OperationControllerStartTest {
     init {
         val rsaKeyPair = RSAKeyGenerator().generate(2048)
         val rsaService = RSAServiceImpl(keyFactoryService = KeyFactoryServiceImpl())
-        algorithm = Algorithm.RSA256(rsaService.toPublicKey(rsaKeyPair.publicKey),
-                                     rsaService.toPrivateKey(rsaKeyPair.privateKey)
+        algorithm = Algorithm.RSA256(
+            rsaService.toPublicKey(rsaKeyPair.publicKey),
+            rsaService.toPrivateKey(rsaKeyPair.privateKey)
         )
     }
 
@@ -79,8 +81,9 @@ class OperationControllerStartTest {
             .andExpect(status().isOk)
             .andExpect(
                 header()
-                    .string(HEADER_NAME_OPERATION_ID,
-                            OPERATION_ID.toString()
+                    .string(
+                        HEADER_NAME_OPERATION_ID,
+                        OPERATION_ID.toString()
                     )
             )
     }
@@ -96,8 +99,9 @@ class OperationControllerStartTest {
             .andExpect(status().isUnauthorized)
             .andExpect(
                 header()
-                    .string(HEADER_NAME_WWW_AUTHENTICATE,
-                            BEARER_REALM
+                    .string(
+                        HEADER_NAME_WWW_AUTHENTICATE,
+                        BEARER_REALM
                     )
             )
     }
@@ -113,8 +117,9 @@ class OperationControllerStartTest {
             .andExpect(status().isUnauthorized)
             .andExpect(
                 header()
-                    .string(HEADER_NAME_WWW_AUTHENTICATE,
-                            BEARER_REALM
+                    .string(
+                        HEADER_NAME_WWW_AUTHENTICATE,
+                        BEARER_REALM
                     )
             )
     }
@@ -130,8 +135,9 @@ class OperationControllerStartTest {
             .andExpect(status().isUnauthorized)
             .andExpect(
                 header()
-                    .string(HEADER_NAME_WWW_AUTHENTICATE,
-                            """$BEARER_REALM, error_code="invalid_token", error_message="The access token is invalid""""
+                    .string(
+                        HEADER_NAME_WWW_AUTHENTICATE,
+                        """$BEARER_REALM, error_code="invalid_token", error_message="The access token is invalid""""
                     )
             )
     }
@@ -147,8 +153,9 @@ class OperationControllerStartTest {
             .andExpect(status().isUnauthorized)
             .andExpect(
                 header()
-                    .string(HEADER_NAME_WWW_AUTHENTICATE,
-                            """$BEARER_REALM, error_code="invalid_token", error_message="The token of wrong type""""
+                    .string(
+                        HEADER_NAME_WWW_AUTHENTICATE,
+                        """$BEARER_REALM, error_code="invalid_token", error_message="The token of wrong type""""
                     )
             )
     }
@@ -164,8 +171,9 @@ class OperationControllerStartTest {
             .andExpect(status().isBadRequest)
             .andExpect(
                 header()
-                    .string(HEADER_NAME_WWW_AUTHENTICATE,
-                            """$BEARER_REALM, error_code="invalid_request", error_message="Missing platform id""""
+                    .string(
+                        HEADER_NAME_WWW_AUTHENTICATE,
+                        """$BEARER_REALM, error_code="invalid_request", error_message="Missing platform id""""
                     )
             )
     }
@@ -181,9 +189,22 @@ class OperationControllerStartTest {
             .andExpect(status().isInternalServerError)
     }
 
-    private fun genAccessJWT(): JWToken = genAccessToken(platformId = PLATFORM_ID,
-                                                         expiresOn = genExpiresOn(),
-                                                         algorithm = algorithm
+    @Test
+    @DisplayName("startOperation - InvalidPlatformIdException")
+    fun startOperation8() {
+        doThrow(InvalidPlatformIdException(RequestContext(request = httpServletRequest), ex = Exception()))
+            .whenever(operationService)
+            .getOperationId(any())
+
+        mockMvc.perform(post(URL_START_OPERATION_ID))
+            .andExpect(status().isBadRequest)
+    }
+
+
+    private fun genAccessJWT(): JWToken = genAccessToken(
+        platformId = PLATFORM_ID.toString(),
+        expiresOn = genExpiresOn(),
+        algorithm = algorithm
     )
 
     private fun genExpiresOn() = LocalDateTime.now().genExpiresOn(6000)

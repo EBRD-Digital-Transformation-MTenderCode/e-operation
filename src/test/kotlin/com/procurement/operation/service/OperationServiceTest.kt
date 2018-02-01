@@ -3,6 +3,8 @@ package com.procurement.operation.service
 import com.auth0.jwt.algorithms.Algorithm
 import com.nhaarman.mockito_kotlin.*
 import com.procurement.operation.dao.OperationDao
+import com.procurement.operation.exception.InvalidOperationIdException
+import com.procurement.operation.exception.InvalidPlatformIdException
 import com.procurement.operation.exception.MissingOperationIdException
 import com.procurement.operation.exception.OperationIdNotFoundException
 import com.procurement.operation.exception.database.PersistenceException
@@ -43,8 +45,9 @@ class OperationServiceTest {
     init {
         val rsaKeyPair = RSAKeyGenerator().generate(2048)
         val rsaService = RSAServiceImpl(keyFactoryService = KeyFactoryServiceImpl())
-        algorithm = Algorithm.RSA256(rsaService.toPublicKey(rsaKeyPair.publicKey),
-                                     rsaService.toPrivateKey(rsaKeyPair.privateKey)
+        algorithm = Algorithm.RSA256(
+            rsaService.toPublicKey(rsaKeyPair.publicKey),
+            rsaService.toPrivateKey(rsaKeyPair.privateKey)
         )
     }
 
@@ -182,6 +185,25 @@ class OperationServiceTest {
 
         assertThrows(
             PersistenceException::class.java,
+            {
+                service.getOperationId(requestContext)
+            }
+        )
+    }
+
+    @Test
+    @DisplayName("startOperation - invalid platform id")
+    fun getOperationTx9() {
+        val request = MockHttpServletRequest().also {
+            it.addHeader(
+                HEADER_NAME_AUTHORIZATION,
+                AUTHORIZATION_PREFIX_BEARER + genAccessJWTWithInvalidPlatformId()
+            )
+        }
+        val requestContext = RequestContext(request = request)
+
+        assertThrows(
+            InvalidPlatformIdException::class.java,
             {
                 service.getOperationId(requestContext)
             }
@@ -334,7 +356,7 @@ class OperationServiceTest {
             .thenReturn(null)
 
         assertThrows(
-            PersistenceException::class.java,
+            OperationIdNotFoundException::class.java,
             {
                 service.checkOperationTx(requestContext)
             }
@@ -382,14 +404,62 @@ class OperationServiceTest {
         )
     }
 
-    private fun genAccessJWT(): JWToken = genAccessToken(platformId = PLATFORM_ID,
-                                                         expiresOn = genExpiresOn(),
-                                                         algorithm = algorithm
+    @Test
+    @DisplayName("checkOperationTx - invalid platform id")
+    fun checkOperationTx12() {
+        val request = MockHttpServletRequest().also {
+            it.addHeader(
+                HEADER_NAME_AUTHORIZATION,
+                AUTHORIZATION_PREFIX_BEARER + genAccessJWTWithInvalidPlatformId()
+            )
+            it.addHeader(HEADER_NAME_OPERATION_ID, OPERATION_ID)
+        }
+        val requestContext = RequestContext(request = request)
+
+        assertThrows(
+            InvalidPlatformIdException::class.java,
+            {
+                service.checkOperationTx(requestContext)
+            }
+        )
+    }
+
+    @Test
+    @DisplayName("checkOperationTx - invalid operation id")
+    fun checkOperationTx13() {
+        val request = MockHttpServletRequest().also {
+            it.addHeader(
+                HEADER_NAME_AUTHORIZATION,
+                AUTHORIZATION_PREFIX_BEARER + genAccessJWT()
+            )
+            it.addHeader(HEADER_NAME_OPERATION_ID, "INVALID")
+        }
+        val requestContext = RequestContext(request = request)
+
+        assertThrows(
+            InvalidOperationIdException::class.java,
+            {
+                service.checkOperationTx(requestContext)
+            }
+        )
+    }
+
+    private fun genAccessJWT(): JWToken = genAccessToken(
+        platformId = PLATFORM_ID.toString(),
+        expiresOn = genExpiresOn(),
+        algorithm = algorithm
     )
 
-    private fun genRefreshJWT(): JWToken = genRefreshToken(platformId = PLATFORM_ID,
-                                                           expiresOn = genExpiresOn(),
-                                                           algorithm = algorithm
+    private fun genAccessJWTWithInvalidPlatformId(): JWToken = genAccessToken(
+        platformId = "INVALID",
+        expiresOn = genExpiresOn(),
+        algorithm = algorithm
+    )
+
+    private fun genRefreshJWT(): JWToken = genRefreshToken(
+        platformId = PLATFORM_ID.toString(),
+        expiresOn = genExpiresOn(),
+        algorithm = algorithm
     )
 
     private fun genAccessJWTWithoutPlatformId(): JWToken = genToken(

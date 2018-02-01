@@ -2,6 +2,8 @@ package com.procurement.operation.controller
 
 import com.auth0.jwt.algorithms.Algorithm
 import com.nhaarman.mockito_kotlin.*
+import com.procurement.operation.exception.InvalidOperationIdException
+import com.procurement.operation.exception.InvalidPlatformIdException
 import com.procurement.operation.exception.MissingOperationIdException
 import com.procurement.operation.exception.OperationIdNotFoundException
 import com.procurement.operation.exception.database.PersistenceException
@@ -201,5 +203,27 @@ class OperationControllerCheckTest {
 
         mockMvc.perform(head(URL_CHECK_OPERATION_ID))
             .andExpect(status().isInternalServerError)
+    }
+
+    @Test
+    @DisplayName("checkOperationId - InvalidOperationIdException")
+    fun checkOperationId10() {
+        doThrow(InvalidOperationIdException(RequestContext(request = httpServletRequest), ex = Exception()))
+            .whenever(operationService)
+            .checkOperationTx(any())
+
+        mockMvc.perform(head(URL_CHECK_OPERATION_ID))
+            .andExpect(status().isBadRequest)
+    }
+
+    @Test
+    @DisplayName("checkOperationId - InvalidPlatformIdException")
+    fun checkOperationId11() {
+        doThrow(InvalidPlatformIdException(RequestContext(request = httpServletRequest), ex = Exception()))
+            .whenever(operationService)
+            .checkOperationTx(any())
+
+        mockMvc.perform(head(URL_CHECK_OPERATION_ID))
+            .andExpect(status().isBadRequest)
     }
 }
