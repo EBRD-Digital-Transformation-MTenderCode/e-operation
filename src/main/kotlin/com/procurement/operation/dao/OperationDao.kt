@@ -40,8 +40,8 @@ class OperationDaoImpl(private val session: Session) : OperationDao {
             .one()
             ?.let {
                 OperationTX(
-                    id = UUID.fromString(it.getString(OPERATION_ID_FIELD)),
-                    platformId = UUID.fromString(it.getString(PLATFORM_ID_FIELD))
+                    id = it.getUUID(OPERATION_ID_FIELD),
+                    platformId = it.getUUID(PLATFORM_ID_FIELD)
                 )
             }
     }

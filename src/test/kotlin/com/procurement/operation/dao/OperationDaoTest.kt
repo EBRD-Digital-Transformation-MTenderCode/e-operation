@@ -60,10 +60,10 @@ class OperationDaoTest {
             .thenReturn(resultSet)
         whenever(resultSet.one())
             .thenReturn(row)
-        whenever(row.getString("id"))
-            .thenReturn(OPERATION_ID.toString())
-        whenever(row.getString("platform_id"))
-            .thenReturn(PLATFORM_ID.toString())
+        whenever(row.getUUID("id"))
+            .thenReturn(OPERATION_ID)
+        whenever(row.getUUID("platform_id"))
+            .thenReturn(PLATFORM_ID)
 
         val result: OperationTX? = dao.getOperationTX(OPERATION_ID)
 

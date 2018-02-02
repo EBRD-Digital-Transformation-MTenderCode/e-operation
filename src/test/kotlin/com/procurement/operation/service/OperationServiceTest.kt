@@ -8,6 +8,7 @@ import com.procurement.operation.exception.InvalidPlatformIdException
 import com.procurement.operation.exception.MissingOperationIdException
 import com.procurement.operation.exception.OperationIdNotFoundException
 import com.procurement.operation.exception.database.PersistenceException
+import com.procurement.operation.exception.database.ReadException
 import com.procurement.operation.exception.security.InvalidAuthHeaderTypeException
 import com.procurement.operation.exception.security.NoSuchAuthHeaderException
 import com.procurement.operation.exception.token.BearerTokenWrongTypeException
@@ -377,7 +378,7 @@ class OperationServiceTest {
             .getOperationTX(OPERATION_ID)
 
         assertThrows(
-            PersistenceException::class.java,
+            ReadException::class.java,
             {
                 service.checkOperationTx(requestContext)
             }

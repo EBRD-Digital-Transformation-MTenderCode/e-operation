@@ -5,6 +5,7 @@ import com.procurement.operation.exception.InvalidPlatformIdException
 import com.procurement.operation.exception.MissingOperationIdException
 import com.procurement.operation.exception.OperationIdNotFoundException
 import com.procurement.operation.exception.database.PersistenceException
+import com.procurement.operation.exception.database.ReadException
 import com.procurement.operation.exception.security.InvalidAuthHeaderTypeException
 import com.procurement.operation.exception.security.NoSuchAuthHeaderException
 import com.procurement.operation.exception.token.BearerTokenWrongTypeException
@@ -103,6 +104,13 @@ class WebExceptionHandler : ResponseEntityExceptionHandler() {
     @ExceptionHandler(value = [PersistenceException::class])
     fun persistenceException(e: PersistenceException): ResponseEntity<*> {
         log.debug("Error writing to database.", e)
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR.value())
+            .build<Any>()
+    }
+
+    @ExceptionHandler(value = [ReadException::class])
+    fun persistenceException(e: ReadException): ResponseEntity<*> {
+        log.debug("Error read from database.", e)
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR.value())
             .build<Any>()
     }

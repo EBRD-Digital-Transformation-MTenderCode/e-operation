@@ -7,6 +7,7 @@ import com.procurement.operation.exception.InvalidPlatformIdException
 import com.procurement.operation.exception.MissingOperationIdException
 import com.procurement.operation.exception.OperationIdNotFoundException
 import com.procurement.operation.exception.database.PersistenceException
+import com.procurement.operation.exception.database.ReadException
 import com.procurement.operation.exception.token.MissingPlatformIdException
 import com.procurement.operation.model.CLAIM_NAME_PLATFORM_ID
 import com.procurement.operation.model.HEADER_NAME_OPERATION_ID
@@ -62,7 +63,7 @@ class OperationServiceImpl(
     private fun getOperationTX(context: RequestContext, operationId: UUID): OperationTX = try {
         operationDao.getOperationTX(operationId)
     } catch (ex: Exception) {
-        throw PersistenceException(context = context, cause = ex)
+        throw ReadException(context = context, cause = ex)
     } ?: throw OperationIdNotFoundException(context = context)
 
     private fun RequestContext.getOperationIdFromHeader(): UUID =
