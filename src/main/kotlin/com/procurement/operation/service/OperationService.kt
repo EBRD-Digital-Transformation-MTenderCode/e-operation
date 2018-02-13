@@ -9,6 +9,8 @@ import com.procurement.operation.exception.OperationIdNotFoundException
 import com.procurement.operation.exception.database.PersistenceException
 import com.procurement.operation.exception.database.ReadException
 import com.procurement.operation.exception.token.MissingPlatformIdException
+import com.procurement.operation.logging.MDCKey
+import com.procurement.operation.logging.mdc
 import com.procurement.operation.model.CLAIM_NAME_PLATFORM_ID
 import com.procurement.operation.model.HEADER_NAME_OPERATION_ID
 import com.procurement.operation.model.OperationTX
@@ -27,9 +29,12 @@ class OperationServiceImpl(
 
     override fun getOperationId(context: RequestContext): UUID {
         val jwt = context.getAccessJWT()
-        val operation = OperationTX(platformId = jwt.getPlatformId(context))
-        operation.persist(context)
-        return operation.id
+        val platformId = jwt.getPlatformId(context)
+        mdc(MDCKey.PLATFORM_ID, platformId) {
+            val operation = OperationTX(platformId = platformId)
+            operation.persist(context)
+            return operation.id
+        }
     }
 
     override fun checkOperationTx(context: RequestContext) {
@@ -38,40 +43,40 @@ class OperationServiceImpl(
         val operationId = context.getOperationIdFromHeader()
         val operationTX = getOperationTX(context, operationId)
         if (operationTX.platformId != platformId) {
-            throw OperationIdNotFoundException(context = context)
+            throw OperationIdNotFoundException(message = "Operation not found.", context = context)
         }
     }
 
     private fun DecodedJWT.getPlatformId(context: RequestContext): UUID {
         val platformId = this.getClaim(CLAIM_NAME_PLATFORM_ID)
         if (platformId.isNull) {
-            throw MissingPlatformIdException(context)
+            throw MissingPlatformIdException(message = "Missing platform id.", context = context)
         }
         return try {
             UUID.fromString(platformId.asString())
         } catch (ex: Exception) {
-            throw InvalidPlatformIdException(context, ex)
+            throw InvalidPlatformIdException(message = "Invalid platform id.", context = context, cause = ex)
         }
     }
 
     private fun OperationTX.persist(context: RequestContext) = try {
         operationDao.persistOperationTX(this)
     } catch (ex: Exception) {
-        throw PersistenceException(context = context, cause = ex)
+        throw PersistenceException(message = "Error writing to database.", context = context, cause = ex)
     }
 
     private fun getOperationTX(context: RequestContext, operationId: UUID): OperationTX = try {
         operationDao.getOperationTX(operationId)
     } catch (ex: Exception) {
-        throw ReadException(context = context, cause = ex)
-    } ?: throw OperationIdNotFoundException(context = context)
+        throw ReadException(message = "Error read from database.", context = context, cause = ex)
+    } ?: throw OperationIdNotFoundException(message = "Operation not found.", context = context)
 
     private fun RequestContext.getOperationIdFromHeader(): UUID =
         this.request.getHeader(HEADER_NAME_OPERATION_ID)?.let {
             try {
                 UUID.fromString(it)
             } catch (ex: Exception) {
-                throw InvalidOperationIdException(this, ex)
+                throw InvalidOperationIdException(message = "Invalid operation id.", context = this, cause = ex)
             }
-        } ?: throw MissingOperationIdException(this)
+        } ?: throw MissingOperationIdException(message = "Missing operation id.", context = this)
 }

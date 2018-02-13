@@ -180,7 +180,7 @@ class OperationServiceTest {
         }
         val requestContext = RequestContext(request = request)
 
-        doThrow(PersistenceException(context = requestContext, cause = Exception()))
+        doThrow(PersistenceException(message = "", context = requestContext, cause = Exception()))
             .whenever(operationDao)
             .persistOperationTX(any())
 
@@ -373,7 +373,7 @@ class OperationServiceTest {
         }
         val requestContext = RequestContext(request = request)
 
-        doThrow(PersistenceException(context = requestContext, cause = Exception()))
+        doThrow(PersistenceException(message = "", context = requestContext, cause = Exception()))
             .whenever(operationDao)
             .getOperationTX(OPERATION_ID)
 

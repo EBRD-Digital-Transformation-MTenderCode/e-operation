@@ -79,7 +79,7 @@ class OperationControllerCheckTest {
     @Test
     @DisplayName("checkOperationId - no valid")
     fun checkOperationId1() {
-        doThrow(OperationIdNotFoundException(RequestContext(request = httpServletRequest)))
+        doThrow(OperationIdNotFoundException(message = "", context = RequestContext(request = httpServletRequest)))
             .whenever(operationService)
             .checkOperationTx(any())
 
@@ -90,7 +90,7 @@ class OperationControllerCheckTest {
     @Test
     @DisplayName("checkOperationId - NoSuchAuthHeaderException")
     fun checkOperationId2() {
-        doThrow(NoSuchAuthHeaderException(RequestContext(request = httpServletRequest)))
+        doThrow(NoSuchAuthHeaderException(message = "", context = RequestContext(request = httpServletRequest)))
             .whenever(operationService)
             .checkOperationTx(any())
 
@@ -107,7 +107,7 @@ class OperationControllerCheckTest {
     @Test
     @DisplayName("checkOperationId - InvalidAuthHeaderTypeException")
     fun checkOperationId3() {
-        doThrow(InvalidAuthHeaderTypeException(RequestContext(request = httpServletRequest)))
+        doThrow(InvalidAuthHeaderTypeException(message = "", context = RequestContext(request = httpServletRequest)))
             .whenever(operationService)
             .checkOperationTx(any())
 
@@ -124,7 +124,7 @@ class OperationControllerCheckTest {
     @Test
     @DisplayName("checkOperationId - InvalidBearerTokenException")
     fun checkOperationId4() {
-        doThrow(InvalidBearerTokenException(RequestContext(request = httpServletRequest)))
+        doThrow(InvalidBearerTokenException(message = "", context = RequestContext(request = httpServletRequest)))
             .whenever(operationService)
             .checkOperationTx(any())
 
@@ -141,7 +141,7 @@ class OperationControllerCheckTest {
     @Test
     @DisplayName("checkOperationId - BearerTokenWrongTypeException")
     fun checkOperationId5() {
-        doThrow(BearerTokenWrongTypeException(RequestContext(request = httpServletRequest)))
+        doThrow(BearerTokenWrongTypeException(message = "", context = RequestContext(request = httpServletRequest)))
             .whenever(operationService)
             .checkOperationTx(any())
 
@@ -158,7 +158,7 @@ class OperationControllerCheckTest {
     @Test
     @DisplayName("checkOperationId - MissingPlatformIdException")
     fun checkOperationId6() {
-        doThrow(MissingPlatformIdException(RequestContext(request = httpServletRequest)))
+        doThrow(MissingPlatformIdException(message = "", context = RequestContext(request = httpServletRequest)))
             .whenever(operationService)
             .checkOperationTx(any())
 
@@ -175,7 +175,7 @@ class OperationControllerCheckTest {
     @Test
     @DisplayName("checkOperationId - MissingOperationIdException")
     fun checkOperationId7() {
-        doThrow(MissingOperationIdException(RequestContext(request = httpServletRequest)))
+        doThrow(MissingOperationIdException(message = "", context = RequestContext(request = httpServletRequest)))
             .whenever(operationService)
             .checkOperationTx(any())
 
@@ -186,7 +186,7 @@ class OperationControllerCheckTest {
     @Test
     @DisplayName("checkOperationId - OperationIdNotFoundException")
     fun checkOperationId8() {
-        doThrow(OperationIdNotFoundException(RequestContext(request = httpServletRequest)))
+        doThrow(OperationIdNotFoundException(message = "", context = RequestContext(request = httpServletRequest)))
             .whenever(operationService)
             .checkOperationTx(any())
 
@@ -197,7 +197,7 @@ class OperationControllerCheckTest {
     @Test
     @DisplayName("checkOperationId - PersistenceException")
     fun checkOperationId9() {
-        doThrow(PersistenceException(RequestContext(request = httpServletRequest), cause = Exception()))
+        doThrow(PersistenceException(message = "", context = RequestContext(request = httpServletRequest), cause = Exception()))
             .whenever(operationService)
             .checkOperationTx(any())
 
@@ -208,7 +208,7 @@ class OperationControllerCheckTest {
     @Test
     @DisplayName("checkOperationId - InvalidOperationIdException")
     fun checkOperationId10() {
-        doThrow(InvalidOperationIdException(RequestContext(request = httpServletRequest), ex = Exception()))
+        doThrow(InvalidOperationIdException(message = "", context = RequestContext(request = httpServletRequest), cause = Exception()))
             .whenever(operationService)
             .checkOperationTx(any())
 
@@ -219,7 +219,7 @@ class OperationControllerCheckTest {
     @Test
     @DisplayName("checkOperationId - InvalidPlatformIdException")
     fun checkOperationId11() {
-        doThrow(InvalidPlatformIdException(RequestContext(request = httpServletRequest), ex = Exception()))
+        doThrow(InvalidPlatformIdException(message = "", context = RequestContext(request = httpServletRequest), cause = Exception()))
             .whenever(operationService)
             .checkOperationTx(any())
 

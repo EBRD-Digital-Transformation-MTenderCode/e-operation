@@ -91,7 +91,7 @@ class OperationControllerStartTest {
     @Test
     @DisplayName("startOperation - NoSuchAuthHeaderException")
     fun startOperation2() {
-        doThrow(NoSuchAuthHeaderException(RequestContext(request = httpServletRequest)))
+        doThrow(NoSuchAuthHeaderException(message = "", context = RequestContext(request = httpServletRequest)))
             .whenever(operationService)
             .getOperationId(any())
 
@@ -109,7 +109,7 @@ class OperationControllerStartTest {
     @Test
     @DisplayName("startOperation - InvalidAuthHeaderTypeException")
     fun startOperation3() {
-        doThrow(InvalidAuthHeaderTypeException(RequestContext(request = httpServletRequest)))
+        doThrow(InvalidAuthHeaderTypeException(message = "", context = RequestContext(request = httpServletRequest)))
             .whenever(operationService)
             .getOperationId(any())
 
@@ -127,7 +127,7 @@ class OperationControllerStartTest {
     @Test
     @DisplayName("startOperation - InvalidBearerTokenException")
     fun startOperation4() {
-        doThrow(InvalidBearerTokenException(RequestContext(request = httpServletRequest)))
+        doThrow(InvalidBearerTokenException(message = "", context = RequestContext(request = httpServletRequest)))
             .whenever(operationService)
             .getOperationId(any())
 
@@ -145,7 +145,7 @@ class OperationControllerStartTest {
     @Test
     @DisplayName("startOperation - BearerTokenWrongTypeException")
     fun startOperation5() {
-        doThrow(BearerTokenWrongTypeException(RequestContext(request = httpServletRequest)))
+        doThrow(BearerTokenWrongTypeException(message = "", context = RequestContext(request = httpServletRequest)))
             .whenever(operationService)
             .getOperationId(any())
 
@@ -163,7 +163,7 @@ class OperationControllerStartTest {
     @Test
     @DisplayName("startOperation - MissingPlatformIdException")
     fun startOperation6() {
-        doThrow(MissingPlatformIdException(RequestContext(request = httpServletRequest)))
+        doThrow(MissingPlatformIdException(message = "", context = RequestContext(request = httpServletRequest)))
             .whenever(operationService)
             .getOperationId(any())
 
@@ -181,7 +181,7 @@ class OperationControllerStartTest {
     @Test
     @DisplayName("startOperation - PersistenceException")
     fun startOperation7() {
-        doThrow(PersistenceException(RequestContext(request = httpServletRequest), cause = Exception()))
+        doThrow(PersistenceException(message = "", context = RequestContext(request = httpServletRequest), cause = Exception()))
             .whenever(operationService)
             .getOperationId(any())
 
@@ -192,7 +192,7 @@ class OperationControllerStartTest {
     @Test
     @DisplayName("startOperation - InvalidPlatformIdException")
     fun startOperation8() {
-        doThrow(InvalidPlatformIdException(RequestContext(request = httpServletRequest), ex = Exception()))
+        doThrow(InvalidPlatformIdException(message = "", context = RequestContext(request = httpServletRequest), cause = Exception()))
             .whenever(operationService)
             .getOperationId(any())
 

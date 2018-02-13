@@ -19,9 +19,9 @@ data class RequestContext(val request: HttpServletRequest) {
 
     private fun getBearerToken(): JWToken {
         val header = request.getHeader(HEADER_NAME_AUTHORIZATION)
-            ?: throw NoSuchAuthHeaderException(this)
+            ?: throw NoSuchAuthHeaderException("There is no 'Bearer' authentication header.", this)
         if (!header.startsWith(AUTHORIZATION_PREFIX_BEARER)) {
-            throw InvalidAuthHeaderTypeException(this)
+            throw InvalidAuthHeaderTypeException("Invalid authentication type, requires a 'Bearer' authentication type.", this)
         }
         return header.substring(AUTHORIZATION_PREFIX_BEARER.length)
     }
@@ -31,13 +31,13 @@ data class RequestContext(val request: HttpServletRequest) {
             it.check()
         }
     } catch (ex: JWTDecodeException) {
-        throw InvalidBearerTokenException(this@RequestContext)
+        throw InvalidBearerTokenException("Invalid authentication type, requires a 'Bearer' authentication type.", this@RequestContext)
     }
 
     private fun DecodedJWT.check() {
         val tokenType = this.getHeaderClaim(HEADER_NAME_TOKEN_TYPE)
         if (tokenType.isNull || tokenType.asString() != ACCESS_TOKEN_TYPE) {
-            throw BearerTokenWrongTypeException(this@RequestContext)
+            throw BearerTokenWrongTypeException("The bearer token of wrong type.", this@RequestContext)
         }
     }
 }

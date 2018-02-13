@@ -2,4 +2,4 @@ package com.procurement.operation.exception
 
 import com.procurement.operation.model.RequestContext
 
-class MissingOperationIdException(val context: RequestContext) : RuntimeException()
+class MissingOperationIdException(message: String, val context: RequestContext) : RuntimeException(message)

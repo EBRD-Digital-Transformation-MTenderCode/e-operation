@@ -29,7 +29,7 @@ class WebExceptionHandler : ResponseEntityExceptionHandler() {
 
     @ExceptionHandler(value = [NoSuchAuthHeaderException::class])
     fun noSuchAuthHeaderException(e: NoSuchAuthHeaderException): ResponseEntity<*> {
-        log.debug("There is no 'Bearer' authentication header.", e)
+        log.warn(e.message)
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED.value())
             .header(HEADER_NAME_WWW_AUTHENTICATE, BEARER_REALM)
             .build<Any>()
@@ -37,7 +37,7 @@ class WebExceptionHandler : ResponseEntityExceptionHandler() {
 
     @ExceptionHandler(value = [InvalidAuthHeaderTypeException::class])
     fun invalidAuthHeaderTypeException(e: InvalidAuthHeaderTypeException): ResponseEntity<*> {
-        log.debug("Invalid authentication type, requires a 'Bearer' authentication type.", e)
+        log.debug(e.message)
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED.value())
             .header(HEADER_NAME_WWW_AUTHENTICATE, BEARER_REALM)
             .build<Any>()
@@ -45,7 +45,7 @@ class WebExceptionHandler : ResponseEntityExceptionHandler() {
 
     @ExceptionHandler(value = [InvalidBearerTokenException::class])
     fun invalidBearerTokenException(e: InvalidBearerTokenException): ResponseEntity<*> {
-        log.debug("Invalid authentication type, requires a 'Bearer' authentication type.", e)
+        log.debug(e.message)
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED.value())
             .header(
                 HEADER_NAME_WWW_AUTHENTICATE,
@@ -56,7 +56,7 @@ class WebExceptionHandler : ResponseEntityExceptionHandler() {
 
     @ExceptionHandler(value = [BearerTokenWrongTypeException::class])
     fun bearerTokenWrongTypeException(e: BearerTokenWrongTypeException): ResponseEntity<*> {
-        log.debug("The bearer token of wrong type.", e)
+        log.debug(e.message)
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED.value())
             .header(
                 HEADER_NAME_WWW_AUTHENTICATE,
@@ -67,7 +67,7 @@ class WebExceptionHandler : ResponseEntityExceptionHandler() {
 
     @ExceptionHandler(value = [MissingPlatformIdException::class])
     fun missingPlatformIdException(e: MissingPlatformIdException): ResponseEntity<*> {
-        log.debug("Missing platform id.", e)
+        log.debug(e.message)
         return ResponseEntity.status(HttpStatus.BAD_REQUEST.value())
             .header(
                 HEADER_NAME_WWW_AUTHENTICATE,
@@ -78,39 +78,39 @@ class WebExceptionHandler : ResponseEntityExceptionHandler() {
 
     @ExceptionHandler(value = [MissingOperationIdException::class])
     fun missingOperationIdException(e: MissingOperationIdException): ResponseEntity<*> {
-        log.debug("Missing operation id.", e)
+        log.debug(e.message)
         return ResponseEntity.status(HttpStatus.BAD_REQUEST.value()).build<Any>()
     }
 
     @ExceptionHandler(value = [InvalidPlatformIdException::class])
     fun invalidPlatformIdException(e: InvalidPlatformIdException): ResponseEntity<*> {
-        log.debug("Invalid platform id.", e)
+        log.debug(e.message)
         return ResponseEntity.status(HttpStatus.BAD_REQUEST.value()).build<Any>()
     }
 
     @ExceptionHandler(value = [InvalidOperationIdException::class])
     fun invalidOperationIdException(e: InvalidOperationIdException): ResponseEntity<*> {
-        log.debug("Invalid operation id.", e)
+        log.debug(e.message)
         return ResponseEntity.status(HttpStatus.BAD_REQUEST.value()).build<Any>()
     }
 
 
     @ExceptionHandler(value = [OperationIdNotFoundException::class])
     fun operationIdNotFoundException(e: OperationIdNotFoundException): ResponseEntity<*> {
-        log.debug("Operation not found.", e)
+        log.debug(e.message)
         return ResponseEntity.status(HttpStatus.NOT_FOUND.value()).build<Any>()
     }
 
     @ExceptionHandler(value = [PersistenceException::class])
     fun persistenceException(e: PersistenceException): ResponseEntity<*> {
-        log.debug("Error writing to database.", e)
+        log.debug(e.message)
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR.value())
             .build<Any>()
     }
 
     @ExceptionHandler(value = [ReadException::class])
     fun persistenceException(e: ReadException): ResponseEntity<*> {
-        log.debug("Error read from database.", e)
+        log.debug(e.message)
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR.value())
             .build<Any>()
     }
