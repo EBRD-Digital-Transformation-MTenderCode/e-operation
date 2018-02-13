@@ -37,7 +37,7 @@ class WebExceptionHandler : ResponseEntityExceptionHandler() {
 
     @ExceptionHandler(value = [InvalidAuthHeaderTypeException::class])
     fun invalidAuthHeaderTypeException(e: InvalidAuthHeaderTypeException): ResponseEntity<*> {
-        log.debug(e.message)
+        log.warn(e.message)
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED.value())
             .header(HEADER_NAME_WWW_AUTHENTICATE, BEARER_REALM)
             .build<Any>()
@@ -45,7 +45,7 @@ class WebExceptionHandler : ResponseEntityExceptionHandler() {
 
     @ExceptionHandler(value = [InvalidBearerTokenException::class])
     fun invalidBearerTokenException(e: InvalidBearerTokenException): ResponseEntity<*> {
-        log.debug(e.message)
+        log.warn(e.message)
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED.value())
             .header(
                 HEADER_NAME_WWW_AUTHENTICATE,
@@ -56,7 +56,7 @@ class WebExceptionHandler : ResponseEntityExceptionHandler() {
 
     @ExceptionHandler(value = [BearerTokenWrongTypeException::class])
     fun bearerTokenWrongTypeException(e: BearerTokenWrongTypeException): ResponseEntity<*> {
-        log.debug(e.message)
+        log.warn(e.message)
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED.value())
             .header(
                 HEADER_NAME_WWW_AUTHENTICATE,
@@ -67,7 +67,7 @@ class WebExceptionHandler : ResponseEntityExceptionHandler() {
 
     @ExceptionHandler(value = [MissingPlatformIdException::class])
     fun missingPlatformIdException(e: MissingPlatformIdException): ResponseEntity<*> {
-        log.debug(e.message)
+        log.warn(e.message)
         return ResponseEntity.status(HttpStatus.BAD_REQUEST.value())
             .header(
                 HEADER_NAME_WWW_AUTHENTICATE,
@@ -78,39 +78,39 @@ class WebExceptionHandler : ResponseEntityExceptionHandler() {
 
     @ExceptionHandler(value = [MissingOperationIdException::class])
     fun missingOperationIdException(e: MissingOperationIdException): ResponseEntity<*> {
-        log.debug(e.message)
+        log.warn(e.message)
         return ResponseEntity.status(HttpStatus.BAD_REQUEST.value()).build<Any>()
     }
 
     @ExceptionHandler(value = [InvalidPlatformIdException::class])
     fun invalidPlatformIdException(e: InvalidPlatformIdException): ResponseEntity<*> {
-        log.debug(e.message)
+        log.warn(e.message)
         return ResponseEntity.status(HttpStatus.BAD_REQUEST.value()).build<Any>()
     }
 
     @ExceptionHandler(value = [InvalidOperationIdException::class])
     fun invalidOperationIdException(e: InvalidOperationIdException): ResponseEntity<*> {
-        log.debug(e.message)
+        log.warn(e.message)
         return ResponseEntity.status(HttpStatus.BAD_REQUEST.value()).build<Any>()
     }
 
 
     @ExceptionHandler(value = [OperationIdNotFoundException::class])
     fun operationIdNotFoundException(e: OperationIdNotFoundException): ResponseEntity<*> {
-        log.debug(e.message)
+        log.warn(e.message)
         return ResponseEntity.status(HttpStatus.NOT_FOUND.value()).build<Any>()
     }
 
     @ExceptionHandler(value = [PersistenceException::class])
     fun persistenceException(e: PersistenceException): ResponseEntity<*> {
-        log.debug(e.message)
+        log.warn(e.message)
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR.value())
             .build<Any>()
     }
 
     @ExceptionHandler(value = [ReadException::class])
     fun persistenceException(e: ReadException): ResponseEntity<*> {
-        log.debug(e.message)
+        log.warn(e.message)
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR.value())
             .build<Any>()
     }
