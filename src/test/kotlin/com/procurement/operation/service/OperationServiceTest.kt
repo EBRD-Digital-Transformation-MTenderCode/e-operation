@@ -14,10 +14,7 @@ import com.procurement.operation.exception.security.NoSuchAuthHeaderException
 import com.procurement.operation.exception.token.BearerTokenWrongTypeException
 import com.procurement.operation.exception.token.InvalidBearerTokenException
 import com.procurement.operation.exception.token.MissingPlatformIdException
-import com.procurement.operation.helper.genAccessToken
-import com.procurement.operation.helper.genExpiresOn
-import com.procurement.operation.helper.genRefreshToken
-import com.procurement.operation.helper.genToken
+import com.procurement.operation.helper.*
 import com.procurement.operation.model.*
 import com.procurement.operation.security.KeyFactoryServiceImpl
 import com.procurement.operation.security.RSAKeyGenerator
@@ -64,12 +61,11 @@ class OperationServiceTest {
         val request = MockHttpServletRequest().also {
             it.addHeader(HEADER_NAME_AUTHORIZATION, AUTHORIZATION_PREFIX_BEARER + genAccessJWT())
         }
-        val requestContext = RequestContext(request = request)
 
         whenever(operationDao.persistOperationTX(any()))
             .thenReturn(true)
 
-        service.getOperationId(requestContext)
+        service.getOperationId(request)
 
         val operationTX = argumentCaptor<OperationTX>()
         verify(operationDao, times(1))
@@ -82,12 +78,11 @@ class OperationServiceTest {
     @DisplayName("startOperation - NoSuchAuthHeaderException")
     fun getOperationTx2() {
         val request = MockHttpServletRequest()
-        val requestContext = RequestContext(request = request)
 
         assertThrows(
             NoSuchAuthHeaderException::class.java,
             {
-                service.getOperationId(requestContext)
+                service.getOperationId(request)
             }
         )
     }
@@ -98,12 +93,11 @@ class OperationServiceTest {
         val request = MockHttpServletRequest().also {
             it.addHeader(HEADER_NAME_AUTHORIZATION, AUTHORIZATION_PREFIX_BASIC + genAccessJWT())
         }
-        val requestContext = RequestContext(request = request)
 
         assertThrows(
             InvalidAuthHeaderTypeException::class.java,
             {
-                service.getOperationId(requestContext)
+                service.getOperationId(request)
             }
         )
     }
@@ -114,12 +108,11 @@ class OperationServiceTest {
         val request = MockHttpServletRequest().also {
             it.addHeader(HEADER_NAME_AUTHORIZATION, AUTHORIZATION_PREFIX_BEARER + "UNKNOWN_TOKEN")
         }
-        val requestContext = RequestContext(request = request)
 
         assertThrows(
             InvalidBearerTokenException::class.java,
             {
-                service.getOperationId(requestContext)
+                service.getOperationId(request)
             }
         )
     }
@@ -130,12 +123,11 @@ class OperationServiceTest {
         val request = MockHttpServletRequest().also {
             it.addHeader(HEADER_NAME_AUTHORIZATION, AUTHORIZATION_PREFIX_BEARER + genAccessJWTWithoutTokenType())
         }
-        val requestContext = RequestContext(request = request)
 
         assertThrows(
             BearerTokenWrongTypeException::class.java,
             {
-                service.getOperationId(requestContext)
+                service.getOperationId(request)
             }
         )
     }
@@ -146,12 +138,11 @@ class OperationServiceTest {
         val request = MockHttpServletRequest().also {
             it.addHeader(HEADER_NAME_AUTHORIZATION, AUTHORIZATION_PREFIX_BEARER + genRefreshJWT())
         }
-        val requestContext = RequestContext(request = request)
 
         assertThrows(
             BearerTokenWrongTypeException::class.java,
             {
-                service.getOperationId(requestContext)
+                service.getOperationId(request)
             }
         )
     }
@@ -162,12 +153,11 @@ class OperationServiceTest {
         val request = MockHttpServletRequest().also {
             it.addHeader(HEADER_NAME_AUTHORIZATION, AUTHORIZATION_PREFIX_BEARER + genAccessJWTWithoutPlatformId())
         }
-        val requestContext = RequestContext(request = request)
 
         assertThrows(
             MissingPlatformIdException::class.java,
             {
-                service.getOperationId(requestContext)
+                service.getOperationId(request)
             }
         )
     }
@@ -178,16 +168,15 @@ class OperationServiceTest {
         val request = MockHttpServletRequest().also {
             it.addHeader(HEADER_NAME_AUTHORIZATION, AUTHORIZATION_PREFIX_BEARER + genAccessJWT())
         }
-        val requestContext = RequestContext(request = request)
 
-        doThrow(PersistenceException(message = "", context = requestContext, cause = Exception()))
+        doThrow(PersistenceException(message = "", cause = Exception()))
             .whenever(operationDao)
             .persistOperationTX(any())
 
         assertThrows(
             PersistenceException::class.java,
             {
-                service.getOperationId(requestContext)
+                service.getOperationId(request)
             }
         )
     }
@@ -201,12 +190,11 @@ class OperationServiceTest {
                 AUTHORIZATION_PREFIX_BEARER + genAccessJWTWithInvalidPlatformId()
             )
         }
-        val requestContext = RequestContext(request = request)
 
         assertThrows(
             InvalidPlatformIdException::class.java,
             {
-                service.getOperationId(requestContext)
+                service.getOperationId(request)
             }
         )
     }
@@ -218,12 +206,11 @@ class OperationServiceTest {
             it.addHeader(HEADER_NAME_AUTHORIZATION, AUTHORIZATION_PREFIX_BEARER + genAccessJWT())
             it.addHeader(HEADER_NAME_OPERATION_ID, OPERATION_ID)
         }
-        val requestContext = RequestContext(request = request)
 
         whenever(operationDao.getOperationTX(eq(OPERATION_ID)))
             .thenReturn(OPERATION_TX)
 
-        service.checkOperationTx(requestContext)
+        service.checkOperationTx(request)
 
         verify(operationDao, times(1))
             .getOperationTX(OPERATION_ID)
@@ -233,12 +220,11 @@ class OperationServiceTest {
     @DisplayName("checkOperationTx - NoSuchAuthHeaderException")
     fun checkOperationTx2() {
         val request = MockHttpServletRequest()
-        val requestContext = RequestContext(request = request)
 
         assertThrows(
             NoSuchAuthHeaderException::class.java,
             {
-                service.checkOperationTx(requestContext)
+                service.checkOperationTx(request)
             }
         )
     }
@@ -250,12 +236,11 @@ class OperationServiceTest {
             it.addHeader(HEADER_NAME_AUTHORIZATION, AUTHORIZATION_PREFIX_BASIC + genAccessJWT())
             it.addHeader(HEADER_NAME_OPERATION_ID, OPERATION_ID)
         }
-        val requestContext = RequestContext(request = request)
 
         assertThrows(
             InvalidAuthHeaderTypeException::class.java,
             {
-                service.checkOperationTx(requestContext)
+                service.checkOperationTx(request)
             }
         )
     }
@@ -267,12 +252,11 @@ class OperationServiceTest {
             it.addHeader(HEADER_NAME_AUTHORIZATION, AUTHORIZATION_PREFIX_BEARER + "UNKNOWN_TOKEN")
             it.addHeader(HEADER_NAME_OPERATION_ID, OPERATION_ID)
         }
-        val requestContext = RequestContext(request = request)
 
         assertThrows(
             InvalidBearerTokenException::class.java,
             {
-                service.checkOperationTx(requestContext)
+                service.checkOperationTx(request)
             }
         )
     }
@@ -284,12 +268,11 @@ class OperationServiceTest {
             it.addHeader(HEADER_NAME_AUTHORIZATION, AUTHORIZATION_PREFIX_BEARER + genAccessJWTWithoutTokenType())
             it.addHeader(HEADER_NAME_OPERATION_ID, OPERATION_ID)
         }
-        val requestContext = RequestContext(request = request)
 
         assertThrows(
             BearerTokenWrongTypeException::class.java,
             {
-                service.checkOperationTx(requestContext)
+                service.checkOperationTx(request)
             }
         )
     }
@@ -301,12 +284,11 @@ class OperationServiceTest {
             it.addHeader(HEADER_NAME_AUTHORIZATION, AUTHORIZATION_PREFIX_BEARER + genRefreshJWT())
             it.addHeader(HEADER_NAME_OPERATION_ID, OPERATION_ID)
         }
-        val requestContext = RequestContext(request = request)
 
         assertThrows(
             BearerTokenWrongTypeException::class.java,
             {
-                service.checkOperationTx(requestContext)
+                service.checkOperationTx(request)
             }
         )
     }
@@ -318,12 +300,11 @@ class OperationServiceTest {
             it.addHeader(HEADER_NAME_AUTHORIZATION, AUTHORIZATION_PREFIX_BEARER + genAccessJWTWithoutPlatformId())
             it.addHeader(HEADER_NAME_OPERATION_ID, OPERATION_ID)
         }
-        val requestContext = RequestContext(request = request)
 
         assertThrows(
             MissingPlatformIdException::class.java,
             {
-                service.checkOperationTx(requestContext)
+                service.checkOperationTx(request)
             }
         )
     }
@@ -334,12 +315,11 @@ class OperationServiceTest {
         val request = MockHttpServletRequest().also {
             it.addHeader(HEADER_NAME_AUTHORIZATION, AUTHORIZATION_PREFIX_BEARER + genAccessJWT())
         }
-        val requestContext = RequestContext(request = request)
 
         assertThrows(
             MissingOperationIdException::class.java,
             {
-                service.checkOperationTx(requestContext)
+                service.checkOperationTx(request)
             }
         )
     }
@@ -351,7 +331,6 @@ class OperationServiceTest {
             it.addHeader(HEADER_NAME_AUTHORIZATION, AUTHORIZATION_PREFIX_BEARER + genAccessJWT())
             it.addHeader(HEADER_NAME_OPERATION_ID, OPERATION_ID)
         }
-        val requestContext = RequestContext(request = request)
 
         whenever(operationDao.getOperationTX(OPERATION_ID))
             .thenReturn(null)
@@ -359,7 +338,7 @@ class OperationServiceTest {
         assertThrows(
             OperationIdNotFoundException::class.java,
             {
-                service.checkOperationTx(requestContext)
+                service.checkOperationTx(request)
             }
         )
     }
@@ -371,16 +350,15 @@ class OperationServiceTest {
             it.addHeader(HEADER_NAME_AUTHORIZATION, AUTHORIZATION_PREFIX_BEARER + genAccessJWT())
             it.addHeader(HEADER_NAME_OPERATION_ID, OPERATION_ID)
         }
-        val requestContext = RequestContext(request = request)
 
-        doThrow(PersistenceException(message = "", context = requestContext, cause = Exception()))
+        doThrow(PersistenceException(message = "", cause = Exception()))
             .whenever(operationDao)
             .getOperationTX(OPERATION_ID)
 
         assertThrows(
             ReadException::class.java,
             {
-                service.checkOperationTx(requestContext)
+                service.checkOperationTx(request)
             }
         )
     }
@@ -392,7 +370,6 @@ class OperationServiceTest {
             it.addHeader(HEADER_NAME_AUTHORIZATION, AUTHORIZATION_PREFIX_BEARER + genAccessJWT())
             it.addHeader(HEADER_NAME_OPERATION_ID, OPERATION_ID)
         }
-        val requestContext = RequestContext(request = request)
 
         whenever(operationDao.getOperationTX(OPERATION_ID))
             .thenReturn(OperationTX(id = OPERATION_ID, platformId = UUID.randomUUID()))
@@ -400,7 +377,7 @@ class OperationServiceTest {
         assertThrows(
             OperationIdNotFoundException::class.java,
             {
-                service.checkOperationTx(requestContext)
+                service.checkOperationTx(request)
             }
         )
     }
@@ -415,12 +392,11 @@ class OperationServiceTest {
             )
             it.addHeader(HEADER_NAME_OPERATION_ID, OPERATION_ID)
         }
-        val requestContext = RequestContext(request = request)
 
         assertThrows(
             InvalidPlatformIdException::class.java,
             {
-                service.checkOperationTx(requestContext)
+                service.checkOperationTx(request)
             }
         )
     }
@@ -435,12 +411,11 @@ class OperationServiceTest {
             )
             it.addHeader(HEADER_NAME_OPERATION_ID, "INVALID")
         }
-        val requestContext = RequestContext(request = request)
 
         assertThrows(
             InvalidOperationIdException::class.java,
             {
-                service.checkOperationTx(requestContext)
+                service.checkOperationTx(request)
             }
         )
     }

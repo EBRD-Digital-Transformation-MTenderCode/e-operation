@@ -14,7 +14,6 @@ import com.procurement.operation.exception.token.InvalidBearerTokenException
 import com.procurement.operation.exception.token.MissingPlatformIdException
 import com.procurement.operation.model.BEARER_REALM
 import com.procurement.operation.model.HEADER_NAME_WWW_AUTHENTICATE
-import com.procurement.operation.model.RequestContext
 import com.procurement.operation.security.KeyFactoryServiceImpl
 import com.procurement.operation.security.RSAKeyGenerator
 import com.procurement.operation.security.RSAServiceImpl
@@ -50,8 +49,9 @@ class OperationControllerCheckTest {
     init {
         val rsaKeyPair = RSAKeyGenerator().generate(2048)
         val rsaService = RSAServiceImpl(keyFactoryService = KeyFactoryServiceImpl())
-        algorithm = Algorithm.RSA256(rsaService.toPublicKey(rsaKeyPair.publicKey),
-                                     rsaService.toPrivateKey(rsaKeyPair.privateKey)
+        algorithm = Algorithm.RSA256(
+            rsaService.toPublicKey(rsaKeyPair.publicKey),
+            rsaService.toPrivateKey(rsaKeyPair.privateKey)
         )
     }
 
@@ -79,7 +79,7 @@ class OperationControllerCheckTest {
     @Test
     @DisplayName("checkOperationId - no valid")
     fun checkOperationId1() {
-        doThrow(OperationIdNotFoundException(message = "", context = RequestContext(request = httpServletRequest)))
+        doThrow(OperationIdNotFoundException(message = ""))
             .whenever(operationService)
             .checkOperationTx(any())
 
@@ -90,7 +90,7 @@ class OperationControllerCheckTest {
     @Test
     @DisplayName("checkOperationId - NoSuchAuthHeaderException")
     fun checkOperationId2() {
-        doThrow(NoSuchAuthHeaderException(message = "", context = RequestContext(request = httpServletRequest)))
+        doThrow(NoSuchAuthHeaderException(message = ""))
             .whenever(operationService)
             .checkOperationTx(any())
 
@@ -98,8 +98,9 @@ class OperationControllerCheckTest {
             .andExpect(status().isUnauthorized)
             .andExpect(
                 header()
-                    .string(HEADER_NAME_WWW_AUTHENTICATE,
-                            BEARER_REALM
+                    .string(
+                        HEADER_NAME_WWW_AUTHENTICATE,
+                        BEARER_REALM
                     )
             )
     }
@@ -107,7 +108,7 @@ class OperationControllerCheckTest {
     @Test
     @DisplayName("checkOperationId - InvalidAuthHeaderTypeException")
     fun checkOperationId3() {
-        doThrow(InvalidAuthHeaderTypeException(message = "", context = RequestContext(request = httpServletRequest)))
+        doThrow(InvalidAuthHeaderTypeException(message = ""))
             .whenever(operationService)
             .checkOperationTx(any())
 
@@ -115,8 +116,9 @@ class OperationControllerCheckTest {
             .andExpect(status().isUnauthorized)
             .andExpect(
                 header()
-                    .string(HEADER_NAME_WWW_AUTHENTICATE,
-                            BEARER_REALM
+                    .string(
+                        HEADER_NAME_WWW_AUTHENTICATE,
+                        BEARER_REALM
                     )
             )
     }
@@ -124,7 +126,7 @@ class OperationControllerCheckTest {
     @Test
     @DisplayName("checkOperationId - InvalidBearerTokenException")
     fun checkOperationId4() {
-        doThrow(InvalidBearerTokenException(message = "", context = RequestContext(request = httpServletRequest)))
+        doThrow(InvalidBearerTokenException(message = ""))
             .whenever(operationService)
             .checkOperationTx(any())
 
@@ -132,8 +134,9 @@ class OperationControllerCheckTest {
             .andExpect(status().isUnauthorized)
             .andExpect(
                 header()
-                    .string(HEADER_NAME_WWW_AUTHENTICATE,
-                            """$BEARER_REALM, error_code="invalid_token", error_message="The access token is invalid""""
+                    .string(
+                        HEADER_NAME_WWW_AUTHENTICATE,
+                        """$BEARER_REALM, error_code="invalid_token", error_message="The access token is invalid""""
                     )
             )
     }
@@ -141,7 +144,7 @@ class OperationControllerCheckTest {
     @Test
     @DisplayName("checkOperationId - BearerTokenWrongTypeException")
     fun checkOperationId5() {
-        doThrow(BearerTokenWrongTypeException(message = "", context = RequestContext(request = httpServletRequest)))
+        doThrow(BearerTokenWrongTypeException(message = ""))
             .whenever(operationService)
             .checkOperationTx(any())
 
@@ -149,8 +152,9 @@ class OperationControllerCheckTest {
             .andExpect(status().isUnauthorized)
             .andExpect(
                 header()
-                    .string(HEADER_NAME_WWW_AUTHENTICATE,
-                            """$BEARER_REALM, error_code="invalid_token", error_message="The token of wrong type""""
+                    .string(
+                        HEADER_NAME_WWW_AUTHENTICATE,
+                        """$BEARER_REALM, error_code="invalid_token", error_message="The token of wrong type""""
                     )
             )
     }
@@ -158,7 +162,7 @@ class OperationControllerCheckTest {
     @Test
     @DisplayName("checkOperationId - MissingPlatformIdException")
     fun checkOperationId6() {
-        doThrow(MissingPlatformIdException(message = "", context = RequestContext(request = httpServletRequest)))
+        doThrow(MissingPlatformIdException(message = ""))
             .whenever(operationService)
             .checkOperationTx(any())
 
@@ -166,8 +170,9 @@ class OperationControllerCheckTest {
             .andExpect(status().isBadRequest)
             .andExpect(
                 header()
-                    .string(HEADER_NAME_WWW_AUTHENTICATE,
-                            """$BEARER_REALM, error_code="invalid_request", error_message="Missing platform id""""
+                    .string(
+                        HEADER_NAME_WWW_AUTHENTICATE,
+                        """$BEARER_REALM, error_code="invalid_request", error_message="Missing platform id""""
                     )
             )
     }
@@ -175,7 +180,7 @@ class OperationControllerCheckTest {
     @Test
     @DisplayName("checkOperationId - MissingOperationIdException")
     fun checkOperationId7() {
-        doThrow(MissingOperationIdException(message = "", context = RequestContext(request = httpServletRequest)))
+        doThrow(MissingOperationIdException(message = ""))
             .whenever(operationService)
             .checkOperationTx(any())
 
@@ -186,7 +191,7 @@ class OperationControllerCheckTest {
     @Test
     @DisplayName("checkOperationId - OperationIdNotFoundException")
     fun checkOperationId8() {
-        doThrow(OperationIdNotFoundException(message = "", context = RequestContext(request = httpServletRequest)))
+        doThrow(OperationIdNotFoundException(message = ""))
             .whenever(operationService)
             .checkOperationTx(any())
 
@@ -197,7 +202,7 @@ class OperationControllerCheckTest {
     @Test
     @DisplayName("checkOperationId - PersistenceException")
     fun checkOperationId9() {
-        doThrow(PersistenceException(message = "", context = RequestContext(request = httpServletRequest), cause = Exception()))
+        doThrow(PersistenceException(message = "", cause = Exception()))
             .whenever(operationService)
             .checkOperationTx(any())
 
@@ -208,7 +213,7 @@ class OperationControllerCheckTest {
     @Test
     @DisplayName("checkOperationId - InvalidOperationIdException")
     fun checkOperationId10() {
-        doThrow(InvalidOperationIdException(message = "", context = RequestContext(request = httpServletRequest), cause = Exception()))
+        doThrow(InvalidOperationIdException(message = "", cause = Exception()))
             .whenever(operationService)
             .checkOperationTx(any())
 
@@ -219,7 +224,7 @@ class OperationControllerCheckTest {
     @Test
     @DisplayName("checkOperationId - InvalidPlatformIdException")
     fun checkOperationId11() {
-        doThrow(InvalidPlatformIdException(message = "", context = RequestContext(request = httpServletRequest), cause = Exception()))
+        doThrow(InvalidPlatformIdException(message = "", cause = Exception()))
             .whenever(operationService)
             .checkOperationTx(any())
 

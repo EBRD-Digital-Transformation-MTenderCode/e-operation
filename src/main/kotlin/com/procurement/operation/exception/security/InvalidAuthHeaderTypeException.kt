@@ -1,5 +1,3 @@
 package com.procurement.operation.exception.security
 
-import com.procurement.operation.model.RequestContext
-
-class InvalidAuthHeaderTypeException(message: String, context: RequestContext) : SecurityBaseException(message, context)
+class InvalidAuthHeaderTypeException(message: String) : SecurityBaseException(message)

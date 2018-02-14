@@ -12,9 +12,13 @@ import com.procurement.operation.exception.security.NoSuchAuthHeaderException
 import com.procurement.operation.exception.token.BearerTokenWrongTypeException
 import com.procurement.operation.exception.token.InvalidBearerTokenException
 import com.procurement.operation.exception.token.MissingPlatformIdException
+import com.procurement.operation.helper.JWToken
 import com.procurement.operation.helper.genAccessToken
 import com.procurement.operation.helper.genExpiresOn
-import com.procurement.operation.model.*
+import com.procurement.operation.model.BEARER_REALM
+import com.procurement.operation.model.HEADER_NAME_AUTHORIZATION
+import com.procurement.operation.model.HEADER_NAME_OPERATION_ID
+import com.procurement.operation.model.HEADER_NAME_WWW_AUTHENTICATE
 import com.procurement.operation.security.KeyFactoryServiceImpl
 import com.procurement.operation.security.RSAKeyGenerator
 import com.procurement.operation.security.RSAServiceImpl
@@ -91,7 +95,7 @@ class OperationControllerStartTest {
     @Test
     @DisplayName("startOperation - NoSuchAuthHeaderException")
     fun startOperation2() {
-        doThrow(NoSuchAuthHeaderException(message = "", context = RequestContext(request = httpServletRequest)))
+        doThrow(NoSuchAuthHeaderException(message = ""))
             .whenever(operationService)
             .getOperationId(any())
 
@@ -109,7 +113,7 @@ class OperationControllerStartTest {
     @Test
     @DisplayName("startOperation - InvalidAuthHeaderTypeException")
     fun startOperation3() {
-        doThrow(InvalidAuthHeaderTypeException(message = "", context = RequestContext(request = httpServletRequest)))
+        doThrow(InvalidAuthHeaderTypeException(message = ""))
             .whenever(operationService)
             .getOperationId(any())
 
@@ -127,7 +131,7 @@ class OperationControllerStartTest {
     @Test
     @DisplayName("startOperation - InvalidBearerTokenException")
     fun startOperation4() {
-        doThrow(InvalidBearerTokenException(message = "", context = RequestContext(request = httpServletRequest)))
+        doThrow(InvalidBearerTokenException(message = ""))
             .whenever(operationService)
             .getOperationId(any())
 
@@ -145,7 +149,7 @@ class OperationControllerStartTest {
     @Test
     @DisplayName("startOperation - BearerTokenWrongTypeException")
     fun startOperation5() {
-        doThrow(BearerTokenWrongTypeException(message = "", context = RequestContext(request = httpServletRequest)))
+        doThrow(BearerTokenWrongTypeException(message = ""))
             .whenever(operationService)
             .getOperationId(any())
 
@@ -163,7 +167,7 @@ class OperationControllerStartTest {
     @Test
     @DisplayName("startOperation - MissingPlatformIdException")
     fun startOperation6() {
-        doThrow(MissingPlatformIdException(message = "", context = RequestContext(request = httpServletRequest)))
+        doThrow(MissingPlatformIdException(message = ""))
             .whenever(operationService)
             .getOperationId(any())
 
@@ -181,7 +185,7 @@ class OperationControllerStartTest {
     @Test
     @DisplayName("startOperation - PersistenceException")
     fun startOperation7() {
-        doThrow(PersistenceException(message = "", context = RequestContext(request = httpServletRequest), cause = Exception()))
+        doThrow(PersistenceException(message = "", cause = Exception()))
             .whenever(operationService)
             .getOperationId(any())
 
@@ -192,14 +196,13 @@ class OperationControllerStartTest {
     @Test
     @DisplayName("startOperation - InvalidPlatformIdException")
     fun startOperation8() {
-        doThrow(InvalidPlatformIdException(message = "", context = RequestContext(request = httpServletRequest), cause = Exception()))
+        doThrow(InvalidPlatformIdException(message = "", cause = Exception()))
             .whenever(operationService)
             .getOperationId(any())
 
         mockMvc.perform(post(URL_START_OPERATION_ID))
             .andExpect(status().isBadRequest)
     }
-
 
     private fun genAccessJWT(): JWToken = genAccessToken(
         platformId = PLATFORM_ID.toString(),
