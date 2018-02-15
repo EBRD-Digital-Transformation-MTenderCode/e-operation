@@ -10,6 +10,7 @@ import com.procurement.operation.exception.token.MissingPlatformIdException
 import com.procurement.operation.helper.extractAccessJWT
 import com.procurement.operation.helper.extractOperationId
 import com.procurement.operation.logging.MDCKey
+import com.procurement.operation.logging.mdc
 import com.procurement.operation.model.CLAIM_NAME_PLATFORM_ID
 import com.procurement.operation.model.OperationTX
 import java.util.*
@@ -48,7 +49,7 @@ class OperationServiceImpl(
         if (platformId.isNull) {
             throw MissingPlatformIdException(message = "Missing platform id.")
         }
-        MDCKey.PLATFORM_ID.mapping(platformId.asString())
+        mdc(MDCKey.PLATFORM_ID, platformId.asString())
         return try {
             UUID.fromString(platformId.asString())
         } catch (ex: Exception) {

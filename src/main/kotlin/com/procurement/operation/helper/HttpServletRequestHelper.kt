@@ -10,6 +10,7 @@ import com.procurement.operation.exception.security.NoSuchAuthHeaderException
 import com.procurement.operation.exception.token.BearerTokenWrongTypeException
 import com.procurement.operation.exception.token.InvalidBearerTokenException
 import com.procurement.operation.logging.MDCKey
+import com.procurement.operation.logging.mdc
 import com.procurement.operation.model.*
 import java.util.*
 import javax.servlet.http.HttpServletRequest
@@ -42,7 +43,7 @@ private fun DecodedJWT.check() {
 
 fun HttpServletRequest.extractOperationId(): UUID =
     this.getHeader(HEADER_NAME_OPERATION_ID)?.let {
-        MDCKey.OPERATION_ID.mapping(it)
+        mdc(MDCKey.OPERATION_ID, it)
         try {
             UUID.fromString(it)
         } catch (ex: Exception) {
