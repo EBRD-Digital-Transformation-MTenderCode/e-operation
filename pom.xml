@@ -29,6 +29,7 @@
         <kotlin.compiler.incremental>true</kotlin.compiler.incremental>
 
         <cassandra-driver.version>3.3.0</cassandra-driver.version>
+        <docker-image-profile></docker-image-profile>
         <docker-maven-plugin.version>0.23.0</docker-maven-plugin.version>
         <java-jwt.version>3.2.0</java-jwt.version>
         <junit-jupiter.version>5.0.0</junit-jupiter.version>
@@ -316,7 +317,7 @@
                     <images>
                         <image>
                             <registry>${docker-registry}</registry>
-                            <name>${docker-registry}/${project.artifactId}:${project.version}</name>
+                            <name>${docker-registry}/${project.artifactId}${docker-image-profile}:${project.version}</name>
                             <build>
                                 <dockerFileDir>${project.basedir}/src/main</dockerFileDir>
                                 <nocache/>
