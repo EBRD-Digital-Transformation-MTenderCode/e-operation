@@ -41,18 +41,18 @@
         <logstash.logback.encoder.version>4.11</logstash.logback.encoder.version>
 
         <!--Libs-->
-        <java-jwt.version>3.2.0</java-jwt.version>
+        <java-jwt.version>3.3.0</java-jwt.version>
         <jetbrains-annotations.version>16.0.1</jetbrains-annotations.version>
 
         <!--Database-->
         <cassandra-driver.version>3.3.0</cassandra-driver.version>
 
         <!--Test-->
-        <junit-jupiter.version>5.0.0</junit-jupiter.version>
-        <junit-platform.version>1.0.0</junit-platform.version>
+        <junit-jupiter.version>5.1.0</junit-jupiter.version>
+        <junit-platform.version>1.1.0</junit-platform.version>
         <mockito-kotlin.version>1.5.0</mockito-kotlin.version>
         <mockito.version>2.13.0</mockito.version>
-        <testcontainers.version>1.4.3</testcontainers.version>
+        <testcontainers.version>1.6.0</testcontainers.version>
 
         <!--Plugins-->
         <maven-compiler-plugin.version>3.7.0</maven-compiler-plugin.version>
