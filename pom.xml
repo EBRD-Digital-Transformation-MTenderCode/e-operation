@@ -35,7 +35,7 @@
         <docker-maven-plugin.version>0.24.0</docker-maven-plugin.version>
 
         <!--Spring-->
-        <spring-cloud.version>Finchley.M5</spring-cloud.version>
+        <spring-cloud.version>Finchley.M9</spring-cloud.version>
 
         <!--Loggin-->
         <logstash.logback.encoder.version>4.11</logstash.logback.encoder.version>
