@@ -1,6 +1,8 @@
 package com.procurement.operation.controller
 
-import com.procurement.operation.model.HEADER_NAME_OPERATION_ID
+import com.procurement.operation.model.response.CheckRS
+import com.procurement.operation.model.response.Data
+import com.procurement.operation.model.response.OperationRS
 import com.procurement.operation.service.OperationService
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.RequestMapping
@@ -14,16 +16,16 @@ class OperationController(
     private val operationService: OperationService
 ) {
     @RequestMapping("/start", method = [RequestMethod.POST])
-    fun startOperation(request: HttpServletRequest): ResponseEntity<Void> {
+    fun startOperation(request: HttpServletRequest): ResponseEntity<OperationRS> {
         val operationId = operationService.getOperationId(request)
-        return ResponseEntity.ok()
-            .header(HEADER_NAME_OPERATION_ID, operationId.toString())
-            .build()
+        return ResponseEntity.ok(
+            OperationRS(data = Data(operationId))
+        )
     }
 
-    @RequestMapping("/check", method = [RequestMethod.HEAD])
-    fun checkOperationId(request: HttpServletRequest): ResponseEntity<Void> {
+    @RequestMapping("/check", method = [RequestMethod.GET])
+    fun checkOperationId(request: HttpServletRequest): ResponseEntity<CheckRS> {
         operationService.checkOperationTx(request)
-        return ResponseEntity.ok().build()
+        return ResponseEntity.ok(CheckRS())
     }
 }

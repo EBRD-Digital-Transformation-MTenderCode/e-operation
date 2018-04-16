@@ -17,19 +17,21 @@ import com.procurement.operation.helper.genAccessToken
 import com.procurement.operation.helper.genExpiresOn
 import com.procurement.operation.model.BEARER_REALM
 import com.procurement.operation.model.HEADER_NAME_AUTHORIZATION
-import com.procurement.operation.model.HEADER_NAME_OPERATION_ID
 import com.procurement.operation.model.HEADER_NAME_WWW_AUTHENTICATE
 import com.procurement.operation.security.KeyFactoryServiceImpl
 import com.procurement.operation.security.RSAKeyGenerator
 import com.procurement.operation.security.RSAServiceImpl
 import com.procurement.operation.service.OperationService
+import org.hamcrest.core.IsEqual
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.springframework.mock.web.MockHttpServletRequest
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.test.web.servlet.setup.MockMvcBuilders
 import java.time.LocalDateTime
@@ -83,13 +85,9 @@ class OperationControllerStartTest {
 
         mockMvc.perform(post(URL_START_OPERATION_ID).header(HEADER_NAME_AUTHORIZATION, genAccessJWT()))
             .andExpect(status().isOk)
-            .andExpect(
-                header()
-                    .string(
-                        HEADER_NAME_OPERATION_ID,
-                        OPERATION_ID.toString()
-                    )
-            )
+            .andExpect(content().contentType("application/json;charset=UTF-8"))
+            .andExpect(jsonPath("$.success", IsEqual.equalTo(true)))
+            .andExpect(jsonPath("$.data.operationId", IsEqual.equalTo(OPERATION_ID.toString())))
     }
 
     @Test
