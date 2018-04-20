@@ -1,0 +1,117 @@
+= *Get the operation token*
+
+== Request
+include::../../../target/generated-snippets/start/success/http-request.adoc[]
+
+== Request headers
+include::../../../target/generated-snippets/start/success/request-headers.adoc[]
+
+== Response structure
+include::../../../target/generated-snippets/start/success/http-response.adoc[]
+
+== Response fields
+include::../../../target/generated-snippets/start/success/response-fields.adoc[]
+
+== Errors
+=== No such the authentication header
+
+====
+.Request
+include::../../../target/generated-snippets/start/errors/no_such_auth_header/http-request.adoc[]
+.Response
+include::../../../target/generated-snippets/start/errors/no_such_auth_header/http-response.adoc[]
+.Response headers
+include::../../../target/generated-snippets/start/errors/no_such_auth_header/response-headers.adoc[]
+.Response fields
+include::../../../target/generated-snippets/start/errors/no_such_auth_header/response-fields.adoc[]
+====
+
+=== Invalid type the authentication header
+
+====
+.Request
+include::../../../target/generated-snippets/start/errors/invalid_type_auth_header/http-request.adoc[]
+.Response
+include::../../../target/generated-snippets/start/errors/invalid_type_auth_header/http-response.adoc[]
+.Response headers
+include::../../../target/generated-snippets/start/errors/invalid_type_auth_header/response-headers.adoc[]
+.Response fields
+include::../../../target/generated-snippets/start/errors/invalid_type_auth_header/response-fields.adoc[]
+====
+
+=== The authentication token is empty
+
+====
+.Request
+include::../../../target/generated-snippets/start/errors/auth_token_is_empty/http-request.adoc[]
+.Response
+include::../../../target/generated-snippets/start/errors/auth_token_is_empty/http-response.adoc[]
+.Response headers
+include::../../../target/generated-snippets/start/errors/auth_token_is_empty/response-headers.adoc[]
+.Response fields
+include::../../../target/generated-snippets/start/errors/auth_token_is_empty/response-fields.adoc[]
+====
+
+=== Invalid type the authentication token
+
+====
+.Request
+include::../../../target/generated-snippets/start/errors/invalid_type_auth_token/http-request.adoc[]
+.Response
+include::../../../target/generated-snippets/start/errors/invalid_type_auth_token/http-response.adoc[]
+.Response headers
+include::../../../target/generated-snippets/start/errors/invalid_type_auth_token/response-headers.adoc[]
+.Response fields
+include::../../../target/generated-snippets/start/errors/invalid_type_auth_token/response-fields.adoc[]
+====
+
+=== Invalid the authentication token
+
+====
+.Request
+include::../../../target/generated-snippets/start/errors/invalid_auth_token/http-request.adoc[]
+.Response
+include::../../../target/generated-snippets/start/errors/invalid_auth_token/http-response.adoc[]
+.Response headers
+include::../../../target/generated-snippets/start/errors/invalid_auth_token/response-headers.adoc[]
+.Response fields
+include::../../../target/generated-snippets/start/errors/invalid_auth_token/response-fields.adoc[]
+====
+
+
+=== Missing platform id
+
+====
+.Request
+include::../../../target/generated-snippets/start/errors/missing_platform/http-request.adoc[]
+.Response
+include::../../../target/generated-snippets/start/errors/missing_platform/http-response.adoc[]
+.Response headers
+include::../../../target/generated-snippets/start/errors/missing_platform/response-headers.adoc[]
+.Response fields
+include::../../../target/generated-snippets/start/errors/missing_platform/response-fields.adoc[]
+====
+
+=== Invalid platform id
+
+====
+.Request
+include::../../../target/generated-snippets/start/errors/invalid_platform/http-request.adoc[]
+.Response
+include::../../../target/generated-snippets/start/errors/invalid_platform/http-response.adoc[]
+.Response headers
+include::../../../target/generated-snippets/start/errors/invalid_platform/response-headers.adoc[]
+.Response fields
+include::../../../target/generated-snippets/start/errors/invalid_platform/response-fields.adoc[]
+====
+
+=== Internal server error
+
+====
+.Request
+include::../../../target/generated-snippets/start/errors/operation_save_in_database/http-request.adoc[]
+.Response
+include::../../../target/generated-snippets/start/errors/operation_save_in_database/http-response.adoc[]
+.Response fields
+include::../../../target/generated-snippets/start/errors/operation_save_in_database/response-fields.adoc[]
+====

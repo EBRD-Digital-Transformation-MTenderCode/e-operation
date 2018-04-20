@@ -1,6 +1,11 @@
 package com.procurement.operation.configuration
 
-import com.datastax.driver.core.*
+import com.datastax.driver.core.Cluster
+import com.datastax.driver.core.PoolingOptions
+import com.datastax.driver.core.ProtocolVersion
+import com.datastax.driver.core.QueryOptions
+import com.datastax.driver.core.Session
+import com.datastax.driver.core.SocketOptions
 import com.procurement.operation.configuration.properties.CassandraProperties
 import org.springframework.beans.BeanUtils
 import org.springframework.beans.factory.ObjectProvider

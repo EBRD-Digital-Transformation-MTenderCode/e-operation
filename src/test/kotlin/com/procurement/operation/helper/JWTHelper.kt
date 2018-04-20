@@ -2,6 +2,7 @@ package com.procurement.operation.helper
 
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
+import com.procurement.operation.PLATFORM_ID
 import com.procurement.operation.model.ACCESS_TOKEN_TYPE
 import com.procurement.operation.model.CLAIM_NAME_PLATFORM_ID
 import com.procurement.operation.model.HEADER_NAME_TOKEN_TYPE
@@ -51,3 +52,37 @@ fun LocalDateTime.genExpiresOn(lifeTime: Long): Date =
 
 private fun LocalDateTime.genExpiredZonedDateTime(expired: Long): ZonedDateTime =
     ZonedDateTime.of(this.plusSeconds(expired), ZoneId.systemDefault())
+
+fun genAccessJWT(algorithm: Algorithm): String = genAccessToken(
+    platformId = PLATFORM_ID.toString(),
+    expiresOn = genExpiresOn(),
+    algorithm = algorithm
+)
+
+fun genAccessJWTWithInvalidPlatformId(algorithm: Algorithm) = genAccessToken(
+    platformId = "INVALID",
+    expiresOn = genExpiresOn(),
+    algorithm = algorithm
+)
+
+fun genRefreshJWT(algorithm: Algorithm) = genRefreshToken(
+    platformId = PLATFORM_ID.toString(),
+    expiresOn = genExpiresOn(),
+    algorithm = algorithm
+)
+
+fun genAccessJWTWithoutPlatformId(algorithm: Algorithm) = genToken(
+    claims = mapOf(),
+    header = mapOf(HEADER_NAME_TOKEN_TYPE to ACCESS_TOKEN_TYPE),
+    expiresOn = genExpiresOn(),
+    algorithm = algorithm
+)
+
+fun genAccessJWTWithoutTokenType(algorithm: Algorithm) = genToken(
+    claims = mapOf<String, Any>(CLAIM_NAME_PLATFORM_ID to PLATFORM_ID),
+    header = mapOf(),
+    expiresOn = genExpiresOn(),
+    algorithm = algorithm
+)
+
+private fun genExpiresOn() = LocalDateTime.now().genExpiresOn(6000)

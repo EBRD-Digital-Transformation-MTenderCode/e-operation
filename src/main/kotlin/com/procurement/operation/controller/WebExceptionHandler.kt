@@ -3,16 +3,19 @@ package com.procurement.operation.controller
 import com.procurement.operation.exception.InvalidOperationIdException
 import com.procurement.operation.exception.InvalidPlatformIdException
 import com.procurement.operation.exception.MissingOperationIdException
-import com.procurement.operation.exception.OperationIdNotFoundException
-import com.procurement.operation.exception.database.PersistenceException
-import com.procurement.operation.exception.database.ReadException
+import com.procurement.operation.exception.UnknownOperationException
+import com.procurement.operation.exception.database.ReadOperationException
+import com.procurement.operation.exception.database.SaveOperationException
 import com.procurement.operation.exception.security.InvalidAuthHeaderTypeException
 import com.procurement.operation.exception.security.NoSuchAuthHeaderException
-import com.procurement.operation.exception.token.BearerTokenWrongTypeException
-import com.procurement.operation.exception.token.InvalidBearerTokenException
+import com.procurement.operation.exception.token.EmptyAuthTokenException
+import com.procurement.operation.exception.token.InvalidAuthTokenException
+import com.procurement.operation.exception.token.InvalidTokenTypeException
 import com.procurement.operation.exception.token.MissingPlatformIdException
 import com.procurement.operation.model.BEARER_REALM
-import com.procurement.operation.model.HEADER_NAME_WWW_AUTHENTICATE
+import com.procurement.operation.model.WWW_AUTHENTICATE_HEADER_NAME
+import com.procurement.operation.model.response.Error
+import com.procurement.operation.model.response.ErrorRS
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
@@ -27,91 +30,226 @@ class WebExceptionHandler : ResponseEntityExceptionHandler() {
         val log: Logger = LoggerFactory.getLogger(WebExceptionHandler::class.java)
     }
 
+    // ***********************
+    // * Handlers for header *
+    // ***********************
     @ExceptionHandler(value = [NoSuchAuthHeaderException::class])
-    fun noSuchAuthHeaderException(e: NoSuchAuthHeaderException): ResponseEntity<*> {
+    fun noSuchAuthHeader(e: NoSuchAuthHeaderException): ResponseEntity<ErrorRS> {
         log.warn(e.message)
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED.value())
-            .header(HEADER_NAME_WWW_AUTHENTICATE, BEARER_REALM)
-            .build<Any>()
+            .header(WWW_AUTHENTICATE_HEADER_NAME, BEARER_REALM)
+            .body(
+                ErrorRS(
+                    errors = listOf(
+                        Error(
+                            code = "auth.header.noSuch",
+                            description = "The authentication header is missing."
+                        )
+                    )
+                )
+            )
     }
 
     @ExceptionHandler(value = [InvalidAuthHeaderTypeException::class])
-    fun invalidAuthHeaderTypeException(e: InvalidAuthHeaderTypeException): ResponseEntity<*> {
+    fun invalidAuthHeaderType(e: InvalidAuthHeaderTypeException): ResponseEntity<ErrorRS> {
         log.warn(e.message)
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED.value())
-            .header(HEADER_NAME_WWW_AUTHENTICATE, BEARER_REALM)
-            .build<Any>()
+            .header(WWW_AUTHENTICATE_HEADER_NAME, BEARER_REALM)
+            .body(
+                ErrorRS(
+                    errors = listOf(
+                        Error(
+                            code = "auth.header.invalidType",
+                            description = "Invalid type of the authentication header. Expected type is 'Bearer'."
+                        )
+                    )
+                )
+            )
     }
 
-    @ExceptionHandler(value = [InvalidBearerTokenException::class])
-    fun invalidBearerTokenException(e: InvalidBearerTokenException): ResponseEntity<*> {
+    // **********************
+    // * Handlers for token *
+    // **********************
+    @ExceptionHandler(value = [EmptyAuthTokenException::class])
+    fun emptyAuthToken(e: EmptyAuthTokenException): ResponseEntity<ErrorRS> {
+        log.warn(e.message)
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED.value())
+            .header(WWW_AUTHENTICATE_HEADER_NAME, BEARER_REALM)
+            .body(
+                ErrorRS(
+                    errors = listOf(
+                        Error(
+                            code = "auth.token.empty",
+                            description = "The authentication token is empty."
+                        )
+                    )
+                )
+            )
+    }
+
+    @ExceptionHandler(value = [InvalidAuthTokenException::class])
+    fun invalidAuthToken(e: InvalidAuthTokenException): ResponseEntity<ErrorRS> {
         log.warn(e.message)
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED.value())
             .header(
-                HEADER_NAME_WWW_AUTHENTICATE,
-                """$BEARER_REALM, error_code="invalid_token", error_message="The access token is invalid""""
+                WWW_AUTHENTICATE_HEADER_NAME,
+                """$BEARER_REALM, error_code="invalid_token", error_message="The access token is invalid.""""
             )
-            .build<Any>()
+            .body(
+                ErrorRS(
+                    errors = listOf(
+                        Error(
+                            code = "auth.token.invalid",
+                            description = "Invalid the access token."
+                        )
+                    )
+                )
+            )
     }
 
-    @ExceptionHandler(value = [BearerTokenWrongTypeException::class])
-    fun bearerTokenWrongTypeException(e: BearerTokenWrongTypeException): ResponseEntity<*> {
+    @ExceptionHandler(value = [InvalidTokenTypeException::class])
+    fun invalidTokenType(e: InvalidTokenTypeException): ResponseEntity<ErrorRS> {
         log.warn(e.message)
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED.value())
             .header(
-                HEADER_NAME_WWW_AUTHENTICATE,
-                """$BEARER_REALM, error_code="invalid_token", error_message="The token of wrong type""""
+                WWW_AUTHENTICATE_HEADER_NAME,
+                """$BEARER_REALM, error_code="invalid_token", error_message="Invalid type of the authentication token.""""
             )
-            .build<Any>()
+            .body(
+                ErrorRS(
+                    errors = listOf(
+                        Error(
+                            code = "auth.token.invalidType",
+                            description = "Invalid type of the authentication token."
+                        )
+                    )
+                )
+            )
     }
 
     @ExceptionHandler(value = [MissingPlatformIdException::class])
-    fun missingPlatformIdException(e: MissingPlatformIdException): ResponseEntity<*> {
+    fun missingPlatformIdException(e: MissingPlatformIdException): ResponseEntity<ErrorRS> {
         log.warn(e.message)
         return ResponseEntity.status(HttpStatus.BAD_REQUEST.value())
             .header(
-                HEADER_NAME_WWW_AUTHENTICATE,
-                """$BEARER_REALM, error_code="invalid_request", error_message="Missing platform id""""
+                WWW_AUTHENTICATE_HEADER_NAME,
+                """$BEARER_REALM, error_code="invalid_token", error_message="Missing the platform id.""""
             )
-            .build<Any>()
-    }
-
-    @ExceptionHandler(value = [MissingOperationIdException::class])
-    fun missingOperationIdException(e: MissingOperationIdException): ResponseEntity<*> {
-        log.warn(e.message)
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST.value()).build<Any>()
+            .body(
+                ErrorRS(
+                    errors = listOf(
+                        Error(
+                            code = "auth.token.platform.missing",
+                            description = "Missing the platform id."
+                        )
+                    )
+                )
+            )
     }
 
     @ExceptionHandler(value = [InvalidPlatformIdException::class])
-    fun invalidPlatformIdException(e: InvalidPlatformIdException): ResponseEntity<*> {
+    fun invalidPlatformIdException(e: InvalidPlatformIdException): ResponseEntity<ErrorRS> {
         log.warn(e.message)
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST.value()).build<Any>()
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST.value())
+            .header(
+                WWW_AUTHENTICATE_HEADER_NAME,
+                """$BEARER_REALM, error_code="invalid_token", error_message="Invalid the platform id.""""
+            )
+            .body(
+                ErrorRS(
+                    errors = listOf(
+                        Error(
+                            code = "auth.token.platform.invalid",
+                            description = "Invalid the platform id."
+                        )
+                    )
+                )
+            )
+    }
+
+    // **************************
+    // * Handlers for operation *
+    // **************************
+    @ExceptionHandler(value = [MissingOperationIdException::class])
+    fun missingOperationIdException(e: MissingOperationIdException): ResponseEntity<ErrorRS> {
+        log.warn(e.message)
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST.value())
+            .body(
+                ErrorRS(
+                    errors = listOf(
+                        Error(
+                            code = "operation.missing",
+                            description = "Missing the operation id."
+                        )
+                    )
+                )
+            )
     }
 
     @ExceptionHandler(value = [InvalidOperationIdException::class])
-    fun invalidOperationIdException(e: InvalidOperationIdException): ResponseEntity<*> {
+    fun invalidOperationIdException(e: InvalidOperationIdException): ResponseEntity<ErrorRS> {
         log.warn(e.message)
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST.value()).build<Any>()
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST.value())
+            .body(
+                ErrorRS(
+                    errors = listOf(
+                        Error(
+                            code = "operation.invalid",
+                            description = "Invalid the operation id."
+                        )
+                    )
+                )
+            )
     }
 
-
-    @ExceptionHandler(value = [OperationIdNotFoundException::class])
-    fun operationIdNotFoundException(e: OperationIdNotFoundException): ResponseEntity<*> {
+    @ExceptionHandler(value = [UnknownOperationException::class])
+    fun unknownOperation(e: UnknownOperationException): ResponseEntity<ErrorRS> {
         log.warn(e.message)
-        return ResponseEntity.status(HttpStatus.NOT_FOUND.value()).build<Any>()
+        return ResponseEntity.status(HttpStatus.NOT_FOUND.value())
+            .body(
+                ErrorRS(
+                    errors = listOf(
+                        Error(
+                            code = "operation.unknown",
+                            description = "Unknown the operation."
+                        )
+                    )
+                )
+            )
     }
 
-    @ExceptionHandler(value = [PersistenceException::class])
-    fun persistenceException(e: PersistenceException): ResponseEntity<*> {
+    // *************************
+    // * Handlers for database *
+    // *************************
+    @ExceptionHandler(value = [SaveOperationException::class])
+    fun persistenceException(e: SaveOperationException): ResponseEntity<ErrorRS> {
         log.warn(e.message)
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR.value())
-            .build<Any>()
+            .body(
+                ErrorRS(
+                    errors = listOf(
+                        Error(
+                            code = "global.internal_server_error",
+                            description = "Internal server error."
+                        )
+                    )
+                )
+            )
     }
 
-    @ExceptionHandler(value = [ReadException::class])
-    fun persistenceException(e: ReadException): ResponseEntity<*> {
+    @ExceptionHandler(value = [ReadOperationException::class])
+    fun persistenceException(e: ReadOperationException): ResponseEntity<ErrorRS> {
         log.warn(e.message)
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR.value())
-            .build<Any>()
+            .body(
+                ErrorRS(
+                    errors = listOf(
+                        Error(
+                            code = "global.internal_server_error",
+                            description = "Internal server error."
+                        )
+                    )
+                )
+            )
     }
 }
