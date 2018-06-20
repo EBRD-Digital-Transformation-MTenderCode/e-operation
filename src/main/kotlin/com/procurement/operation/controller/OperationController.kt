@@ -16,11 +16,11 @@ import org.springframework.web.bind.annotation.RequestMethod
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-@RequestMapping("/operation")
+@RequestMapping("/operations")
 class OperationController(
     private val operationService: OperationService
 ) {
-    @RequestMapping("/start", method = [RequestMethod.POST])
+    @RequestMapping(method = [RequestMethod.POST])
     fun startOperation(
         @NotNull
         @RequestHeader(

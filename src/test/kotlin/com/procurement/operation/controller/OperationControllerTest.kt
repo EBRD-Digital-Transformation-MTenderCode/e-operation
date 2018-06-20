@@ -1,16 +1,8 @@
 package com.procurement.operation.controller
 
 import com.auth0.jwt.algorithms.Algorithm
-import com.nhaarman.mockito_kotlin.any
-import com.nhaarman.mockito_kotlin.doThrow
-import com.nhaarman.mockito_kotlin.eq
-import com.nhaarman.mockito_kotlin.mock
-import com.nhaarman.mockito_kotlin.whenever
-import com.procurement.operation.ACCESS_TOKEN
-import com.procurement.operation.INVALID_ACCESS_TOKEN
-import com.procurement.operation.INVALID_OPERATION_ID
-import com.procurement.operation.OPERATION_ID
-import com.procurement.operation.REFRESH_TOKEN
+import com.nhaarman.mockito_kotlin.*
+import com.procurement.operation.*
 import com.procurement.operation.exception.InvalidOperationIdException
 import com.procurement.operation.exception.InvalidPlatformIdException
 import com.procurement.operation.exception.UnknownOperationException
@@ -20,12 +12,7 @@ import com.procurement.operation.exception.token.InvalidAuthTokenException
 import com.procurement.operation.exception.token.InvalidTokenTypeException
 import com.procurement.operation.exception.token.MissingPlatformIdException
 import com.procurement.operation.helper.genAccessJWT
-import com.procurement.operation.model.AUTHORIZATION_HEADER_NAME
-import com.procurement.operation.model.AUTHORIZATION_PREFIX_BASIC
-import com.procurement.operation.model.AUTHORIZATION_PREFIX_BEARER
-import com.procurement.operation.model.BEARER_REALM
-import com.procurement.operation.model.OPERATION_ID_HEADER_NAME
-import com.procurement.operation.model.WWW_AUTHENTICATE_HEADER_NAME
+import com.procurement.operation.model.*
 import com.procurement.operation.security.KeyFactoryServiceImpl
 import com.procurement.operation.security.RSAKeyGenerator
 import com.procurement.operation.security.RSAServiceImpl
@@ -40,9 +27,7 @@ import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.restdocs.RestDocumentationContextProvider
 import org.springframework.restdocs.RestDocumentationExtension
 import org.springframework.restdocs.headers.HeaderDocumentation
-import org.springframework.restdocs.headers.HeaderDocumentation.headerWithName
-import org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders
-import org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders
+import org.springframework.restdocs.headers.HeaderDocumentation.*
 import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation
 import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document
 import org.springframework.restdocs.operation.preprocess.Preprocessors
@@ -52,10 +37,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
 import org.springframework.test.web.servlet.setup.MockMvcBuilders
 import org.springframework.test.web.servlet.setup.StandaloneMockMvcBuilder
 import org.testcontainers.shaded.org.glassfish.jersey.internal.util.Base64
@@ -100,7 +82,7 @@ class OperationControllerTest {
 
     @Nested
     inner class StartOperation {
-        private val URL = "/operation/start"
+        private val URL = "/operations"
 
         @Test
         @DisplayName("The check the operation was successful")
@@ -414,7 +396,7 @@ class OperationControllerTest {
 
     @Nested
     inner class CheckOperation {
-        private val URL = "/operation/check"
+        private val URL = "/operations/check"
 
         @Test
         @DisplayName("The check the operation was successful")
