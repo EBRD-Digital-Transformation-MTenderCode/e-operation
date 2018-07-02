@@ -12,8 +12,8 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 @ServletComponentScan(basePackages = ["com.procurement.operation.filter"])
 @ComponentScan(basePackages = ["com.procurement.operation.controller"])
 class WebConfiguration : WebMvcConfigurer {
-    override fun addResourceHandlers(registry: ResourceHandlerRegistry?) {
-        registry!!.addResourceHandler("/docs/index.html")
+    override fun addResourceHandlers(registry: ResourceHandlerRegistry) {
+        registry.addResourceHandler("/docs/index.html")
             .addResourceLocations("classpath:/static/docs")
     }
 }

@@ -1,9 +1,11 @@
 package com.procurement.operation.controller
 
+import com.procurement.operation.exception.FormsException
 import com.procurement.operation.exception.InvalidOperationIdException
 import com.procurement.operation.exception.InvalidPlatformIdException
 import com.procurement.operation.exception.MissingOperationIdException
 import com.procurement.operation.exception.UnknownOperationException
+import com.procurement.operation.exception.client.RemoteServiceException
 import com.procurement.operation.exception.database.ReadOperationException
 import com.procurement.operation.exception.database.SaveOperationException
 import com.procurement.operation.exception.security.InvalidAuthHeaderTypeException
@@ -14,7 +16,6 @@ import com.procurement.operation.exception.token.InvalidTokenTypeException
 import com.procurement.operation.exception.token.MissingPlatformIdException
 import com.procurement.operation.model.BEARER_REALM
 import com.procurement.operation.model.WWW_AUTHENTICATE_HEADER_NAME
-import com.procurement.operation.model.response.Error
 import com.procurement.operation.model.response.ErrorRS
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -41,7 +42,7 @@ class WebExceptionHandler : ResponseEntityExceptionHandler() {
             .body(
                 ErrorRS(
                     errors = listOf(
-                        Error(
+                        ErrorRS.Error(
                             code = "auth.header.noSuch",
                             description = "The authentication header is missing."
                         )
@@ -58,7 +59,7 @@ class WebExceptionHandler : ResponseEntityExceptionHandler() {
             .body(
                 ErrorRS(
                     errors = listOf(
-                        Error(
+                        ErrorRS.Error(
                             code = "auth.header.invalidType",
                             description = "Invalid type of the authentication header. Expected type is 'Bearer'."
                         )
@@ -78,7 +79,7 @@ class WebExceptionHandler : ResponseEntityExceptionHandler() {
             .body(
                 ErrorRS(
                     errors = listOf(
-                        Error(
+                        ErrorRS.Error(
                             code = "auth.token.empty",
                             description = "The authentication token is empty."
                         )
@@ -98,7 +99,7 @@ class WebExceptionHandler : ResponseEntityExceptionHandler() {
             .body(
                 ErrorRS(
                     errors = listOf(
-                        Error(
+                        ErrorRS.Error(
                             code = "auth.token.invalid",
                             description = "Invalid the access token."
                         )
@@ -118,7 +119,7 @@ class WebExceptionHandler : ResponseEntityExceptionHandler() {
             .body(
                 ErrorRS(
                     errors = listOf(
-                        Error(
+                        ErrorRS.Error(
                             code = "auth.token.invalidType",
                             description = "Invalid type of the authentication token."
                         )
@@ -138,7 +139,7 @@ class WebExceptionHandler : ResponseEntityExceptionHandler() {
             .body(
                 ErrorRS(
                     errors = listOf(
-                        Error(
+                        ErrorRS.Error(
                             code = "auth.token.platform.missing",
                             description = "Missing the platform id."
                         )
@@ -158,7 +159,7 @@ class WebExceptionHandler : ResponseEntityExceptionHandler() {
             .body(
                 ErrorRS(
                     errors = listOf(
-                        Error(
+                        ErrorRS.Error(
                             code = "auth.token.platform.invalid",
                             description = "Invalid the platform id."
                         )
@@ -177,7 +178,7 @@ class WebExceptionHandler : ResponseEntityExceptionHandler() {
             .body(
                 ErrorRS(
                     errors = listOf(
-                        Error(
+                        ErrorRS.Error(
                             code = "operation.missing",
                             description = "Missing the operation id."
                         )
@@ -193,7 +194,7 @@ class WebExceptionHandler : ResponseEntityExceptionHandler() {
             .body(
                 ErrorRS(
                     errors = listOf(
-                        Error(
+                        ErrorRS.Error(
                             code = "operation.invalid",
                             description = "Invalid the operation id."
                         )
@@ -209,7 +210,7 @@ class WebExceptionHandler : ResponseEntityExceptionHandler() {
             .body(
                 ErrorRS(
                     errors = listOf(
-                        Error(
+                        ErrorRS.Error(
                             code = "operation.unknown",
                             description = "Unknown the operation."
                         )
@@ -228,7 +229,7 @@ class WebExceptionHandler : ResponseEntityExceptionHandler() {
             .body(
                 ErrorRS(
                     errors = listOf(
-                        Error(
+                        ErrorRS.Error(
                             code = "global.internal_server_error",
                             description = "Internal server error."
                         )
@@ -244,12 +245,37 @@ class WebExceptionHandler : ResponseEntityExceptionHandler() {
             .body(
                 ErrorRS(
                     errors = listOf(
-                        Error(
+                        ErrorRS.Error(
                             code = "global.internal_server_error",
                             description = "Internal server error."
                         )
                     )
                 )
             )
+    }
+
+    @ExceptionHandler(value = [FormsException::class])
+    fun remoteService(exception: FormsException): ResponseEntity<*> {
+        log.error(exception.message)
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST.value())
+            .body(
+                ErrorRS(
+                    errors = listOf(
+                        ErrorRS.Error(
+                            code = "request.form.invalid",
+                            description = "Invalid value of query parameter - 'form'."
+                        )
+                    )
+                )
+            )
+    }
+
+    @ExceptionHandler(value = [RemoteServiceException::class])
+    fun remoteService(exception: RemoteServiceException): ResponseEntity<*> {
+        log.error(exception.message)
+
+        return ResponseEntity.status(exception.code)
+            .body(exception.payload)
     }
 }

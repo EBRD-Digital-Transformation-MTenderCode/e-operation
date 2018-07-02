@@ -1,8 +1,16 @@
 package com.procurement.operation.controller
 
 import com.auth0.jwt.algorithms.Algorithm
-import com.nhaarman.mockito_kotlin.*
-import com.procurement.operation.*
+import com.nhaarman.mockito_kotlin.any
+import com.nhaarman.mockito_kotlin.doThrow
+import com.nhaarman.mockito_kotlin.eq
+import com.nhaarman.mockito_kotlin.mock
+import com.nhaarman.mockito_kotlin.whenever
+import com.procurement.operation.ACCESS_TOKEN
+import com.procurement.operation.INVALID_ACCESS_TOKEN
+import com.procurement.operation.INVALID_OPERATION_ID
+import com.procurement.operation.OPERATION_ID
+import com.procurement.operation.REFRESH_TOKEN
 import com.procurement.operation.exception.InvalidOperationIdException
 import com.procurement.operation.exception.InvalidPlatformIdException
 import com.procurement.operation.exception.UnknownOperationException
@@ -12,10 +20,16 @@ import com.procurement.operation.exception.token.InvalidAuthTokenException
 import com.procurement.operation.exception.token.InvalidTokenTypeException
 import com.procurement.operation.exception.token.MissingPlatformIdException
 import com.procurement.operation.helper.genAccessJWT
-import com.procurement.operation.model.*
+import com.procurement.operation.model.AUTHORIZATION_HEADER_NAME
+import com.procurement.operation.model.AUTHORIZATION_PREFIX_BASIC
+import com.procurement.operation.model.AUTHORIZATION_PREFIX_BEARER
+import com.procurement.operation.model.BEARER_REALM
+import com.procurement.operation.model.OPERATION_ID_HEADER_NAME
+import com.procurement.operation.model.WWW_AUTHENTICATE_HEADER_NAME
 import com.procurement.operation.security.KeyFactoryServiceImpl
 import com.procurement.operation.security.RSAKeyGenerator
 import com.procurement.operation.security.RSAServiceImpl
+import com.procurement.operation.service.FormsService
 import com.procurement.operation.service.OperationService
 import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.core.IsEqual
@@ -27,17 +41,21 @@ import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.restdocs.RestDocumentationContextProvider
 import org.springframework.restdocs.RestDocumentationExtension
 import org.springframework.restdocs.headers.HeaderDocumentation
-import org.springframework.restdocs.headers.HeaderDocumentation.*
+import org.springframework.restdocs.headers.HeaderDocumentation.headerWithName
+import org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders
+import org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders
 import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation
 import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document
 import org.springframework.restdocs.operation.preprocess.Preprocessors
 import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.test.web.servlet.MockMvc
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.test.web.servlet.setup.MockMvcBuilders
 import org.springframework.test.web.servlet.setup.StandaloneMockMvcBuilder
 import org.testcontainers.shaded.org.glassfish.jersey.internal.util.Base64
@@ -47,6 +65,7 @@ class OperationControllerTest {
     private val algorithm: Algorithm
     private lateinit var mockMvc: MockMvc
     private lateinit var operationService: OperationService
+    private lateinit var formsService: FormsService
 
     init {
         val rsaKeyPair = RSAKeyGenerator().generate(2048)
@@ -60,8 +79,9 @@ class OperationControllerTest {
     @BeforeEach
     fun init(restDocumentation: RestDocumentationContextProvider) {
         operationService = mock()
+        formsService = mock()
 
-        val controller = OperationController(operationService = operationService)
+        val controller = OperationController(operationService = operationService, formsService = formsService)
         val exceptionHandler = WebExceptionHandler()
         mockMvc = MockMvcBuilders.standaloneSetup(controller)
             .setControllerAdvice(exceptionHandler)
@@ -98,7 +118,6 @@ class OperationControllerTest {
                     .header(AUTHORIZATION_HEADER_NAME, authHeaderValue))
                 .andExpect(MockMvcResultMatchers.status().isOk)
                 .andExpect(MockMvcResultMatchers.content().contentType("application/json;charset=UTF-8"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.success", equalTo(true)))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.data.operationId", equalTo(OPERATION_ID.toString())))
                 .andDo(
                     document(
@@ -124,7 +143,6 @@ class OperationControllerTest {
                 .andExpect(status().isUnauthorized)
                 .andExpect(header().string(WWW_AUTHENTICATE_HEADER_NAME, wwwAuthHeaderValue))
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
-                .andExpect(jsonPath("$.success", equalTo(false)))
                 .andExpect(jsonPath("$.errors.length()", equalTo(1)))
                 .andExpect(jsonPath("$.errors[0].code", equalTo("auth.header.noSuch")))
                 .andExpect(
@@ -159,7 +177,6 @@ class OperationControllerTest {
                 .andExpect(status().isUnauthorized)
                 .andExpect(header().string(WWW_AUTHENTICATE_HEADER_NAME, wwwAuthHeaderValue))
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
-                .andExpect(jsonPath("$.success", equalTo(false)))
                 .andExpect(jsonPath("$.errors.length()", equalTo(1)))
                 .andExpect(jsonPath("$.errors[0].code", equalTo("auth.header.invalidType")))
                 .andExpect(
@@ -194,7 +211,6 @@ class OperationControllerTest {
                 .andExpect(status().isUnauthorized)
                 .andExpect(header().string(WWW_AUTHENTICATE_HEADER_NAME, wwwAuthHeaderValue))
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
-                .andExpect(jsonPath("$.success", equalTo(false)))
                 .andExpect(jsonPath("$.errors.length()", equalTo(1)))
                 .andExpect(jsonPath("$.errors[0].code", equalTo("auth.token.empty")))
                 .andExpect(jsonPath("$.errors[0].description", equalTo("The authentication token is empty.")))
@@ -230,7 +246,6 @@ class OperationControllerTest {
                 .andExpect(status().isUnauthorized)
                 .andExpect(header().string(WWW_AUTHENTICATE_HEADER_NAME, wwwAuthHeaderValue))
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
-                .andExpect(jsonPath("$.success", equalTo(false)))
                 .andExpect(jsonPath("$.errors.length()", equalTo(1)))
                 .andExpect(jsonPath("$.errors[0].code", equalTo("auth.token.invalidType")))
                 .andExpect(
@@ -271,7 +286,6 @@ class OperationControllerTest {
                 .andExpect(status().isUnauthorized)
                 .andExpect(header().string(WWW_AUTHENTICATE_HEADER_NAME, wwwAuthHeaderValue))
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
-                .andExpect(jsonPath("$.success", equalTo(false)))
                 .andExpect(jsonPath("$.errors.length()", equalTo(1)))
                 .andExpect(jsonPath("$.errors[0].code", equalTo("auth.token.invalid")))
                 .andExpect(
@@ -312,7 +326,6 @@ class OperationControllerTest {
                 .andExpect(status().isBadRequest)
                 .andExpect(header().string(WWW_AUTHENTICATE_HEADER_NAME, wwwAuthHeaderValue))
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
-                .andExpect(jsonPath("$.success", equalTo(false)))
                 .andExpect(jsonPath("$.errors.length()", equalTo(1)))
                 .andExpect(jsonPath("$.errors[0].code", equalTo("auth.token.platform.missing")))
                 .andExpect(jsonPath("$.errors[0].description", equalTo("Missing the platform id.")))
@@ -348,7 +361,6 @@ class OperationControllerTest {
                 .andExpect(status().isBadRequest)
                 .andExpect(header().string(WWW_AUTHENTICATE_HEADER_NAME, wwwAuthHeaderValue))
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
-                .andExpect(jsonPath("$.success", equalTo(false)))
                 .andExpect(jsonPath("$.errors.length()", equalTo(1)))
                 .andExpect(jsonPath("$.errors[0].code", equalTo("auth.token.platform.invalid")))
                 .andExpect(jsonPath("$.errors[0].description", equalTo("Invalid the platform id.")))
@@ -381,7 +393,6 @@ class OperationControllerTest {
                     .header(AUTHORIZATION_HEADER_NAME, authHeaderValue))
                 .andExpect(status().isInternalServerError)
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
-                .andExpect(jsonPath("$.success", equalTo(false)))
                 .andExpect(jsonPath("$.errors.length()", equalTo(1)))
                 .andExpect(jsonPath("$.errors[0].code", equalTo("global.internal_server_error")))
                 .andExpect(jsonPath("$.errors[0].description", equalTo("Internal server error.")))
@@ -403,12 +414,10 @@ class OperationControllerTest {
         fun checkOperation() {
             val authHeaderValue = AUTHORIZATION_PREFIX_BEARER + genAccessJWT(algorithm)
             mockMvc.perform(
-                MockMvcRequestBuilders.get(URL)
+                get(URL)
                     .header(AUTHORIZATION_HEADER_NAME, authHeaderValue)
                     .header(OPERATION_ID_HEADER_NAME, OPERATION_ID))
-                .andExpect(MockMvcResultMatchers.status().isOk)
-                .andExpect(MockMvcResultMatchers.content().contentType("application/json;charset=UTF-8"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.success", equalTo(true)))
+                .andExpect(status().isOk)
                 .andDo(
                     document(
                         "check/success",
@@ -417,8 +426,7 @@ class OperationControllerTest {
                                 .description("Bearer auth credentials."),
                             headerWithName(OPERATION_ID_HEADER_NAME)
                                 .description("The token of an operation that needs checking.")
-                        ),
-                        responseFields(ModelDescription.Check.responseSuccessful())
+                        )
                     )
                 )
         }
@@ -436,7 +444,6 @@ class OperationControllerTest {
                 .andExpect(status().isUnauthorized)
                 .andExpect(header().string(WWW_AUTHENTICATE_HEADER_NAME, wwwAuthHeaderValue))
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
-                .andExpect(jsonPath("$.success", equalTo(false)))
                 .andExpect(jsonPath("$.errors.length()", equalTo(1)))
                 .andExpect(jsonPath("$.errors[0].code", equalTo("auth.header.noSuch")))
                 .andExpect(
@@ -472,7 +479,6 @@ class OperationControllerTest {
                 .andExpect(status().isUnauthorized)
                 .andExpect(header().string(WWW_AUTHENTICATE_HEADER_NAME, wwwAuthHeaderValue))
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
-                .andExpect(jsonPath("$.success", equalTo(false)))
                 .andExpect(jsonPath("$.errors.length()", equalTo(1)))
                 .andExpect(jsonPath("$.errors[0].code", equalTo("auth.header.invalidType")))
                 .andExpect(
@@ -508,7 +514,6 @@ class OperationControllerTest {
                 .andExpect(status().isUnauthorized)
                 .andExpect(header().string(WWW_AUTHENTICATE_HEADER_NAME, wwwAuthHeaderValue))
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
-                .andExpect(jsonPath("$.success", equalTo(false)))
                 .andExpect(jsonPath("$.errors.length()", equalTo(1)))
                 .andExpect(jsonPath("$.errors[0].code", equalTo("auth.token.empty")))
                 .andExpect(jsonPath("$.errors[0].description", equalTo("The authentication token is empty.")))
@@ -545,7 +550,6 @@ class OperationControllerTest {
                 .andExpect(status().isUnauthorized)
                 .andExpect(header().string(WWW_AUTHENTICATE_HEADER_NAME, wwwAuthHeaderValue))
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
-                .andExpect(jsonPath("$.success", equalTo(false)))
                 .andExpect(jsonPath("$.errors.length()", equalTo(1)))
                 .andExpect(jsonPath("$.errors[0].code", equalTo("auth.token.invalidType")))
                 .andExpect(
@@ -587,7 +591,6 @@ class OperationControllerTest {
                 .andExpect(status().isUnauthorized)
                 .andExpect(header().string(WWW_AUTHENTICATE_HEADER_NAME, wwwAuthHeaderValue))
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
-                .andExpect(jsonPath("$.success", equalTo(false)))
                 .andExpect(jsonPath("$.errors.length()", equalTo(1)))
                 .andExpect(jsonPath("$.errors[0].code", equalTo("auth.token.invalid")))
                 .andExpect(
@@ -629,7 +632,6 @@ class OperationControllerTest {
                 .andExpect(status().isBadRequest)
                 .andExpect(header().string(WWW_AUTHENTICATE_HEADER_NAME, wwwAuthHeaderValue))
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
-                .andExpect(jsonPath("$.success", equalTo(false)))
                 .andExpect(jsonPath("$.errors.length()", equalTo(1)))
                 .andExpect(jsonPath("$.errors[0].code", equalTo("auth.token.platform.missing")))
                 .andExpect(jsonPath("$.errors[0].description", equalTo("Missing the platform id.")))
@@ -666,7 +668,6 @@ class OperationControllerTest {
                 .andExpect(status().isBadRequest)
                 .andExpect(header().string(WWW_AUTHENTICATE_HEADER_NAME, wwwAuthHeaderValue))
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
-                .andExpect(jsonPath("$.success", equalTo(false)))
                 .andExpect(jsonPath("$.errors.length()", equalTo(1)))
                 .andExpect(jsonPath("$.errors[0].code", equalTo("auth.token.platform.invalid")))
                 .andExpect(jsonPath("$.errors[0].description", equalTo("Invalid the platform id.")))
@@ -694,7 +695,6 @@ class OperationControllerTest {
                     .header(AUTHORIZATION_HEADER_NAME, authHeaderValue))
                 .andExpect(status().isBadRequest)
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
-                .andExpect(jsonPath("$.success", equalTo(false)))
                 .andExpect(jsonPath("$.errors.length()", equalTo(1)))
                 .andExpect(jsonPath("$.errors[0].code", equalTo("operation.missing")))
                 .andExpect(jsonPath("$.errors[0].description", equalTo("Missing the operation id.")))
@@ -725,7 +725,6 @@ class OperationControllerTest {
                     .header(OPERATION_ID_HEADER_NAME, INVALID_OPERATION_ID))
                 .andExpect(status().isBadRequest)
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
-                .andExpect(jsonPath("$.success", equalTo(false)))
                 .andExpect(jsonPath("$.errors.length()", equalTo(1)))
                 .andExpect(jsonPath("$.errors[0].code", equalTo("operation.invalid")))
                 .andExpect(jsonPath("$.errors[0].description", equalTo("Invalid the operation id.")))
@@ -756,7 +755,6 @@ class OperationControllerTest {
                     .header(OPERATION_ID_HEADER_NAME, OPERATION_ID))
                 .andExpect(status().isNotFound)
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
-                .andExpect(jsonPath("$.success", equalTo(false)))
                 .andExpect(jsonPath("$.errors.length()", equalTo(1)))
                 .andExpect(jsonPath("$.errors[0].code", equalTo("operation.unknown")))
                 .andExpect(jsonPath("$.errors[0].description", equalTo("Unknown the operation.")))
@@ -787,7 +785,6 @@ class OperationControllerTest {
                     .header(OPERATION_ID_HEADER_NAME, OPERATION_ID))
                 .andExpect(status().isInternalServerError)
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
-                .andExpect(jsonPath("$.success", equalTo(false)))
                 .andExpect(jsonPath("$.errors.length()", equalTo(1)))
                 .andExpect(jsonPath("$.errors[0].code", equalTo("global.internal_server_error")))
                 .andExpect(jsonPath("$.errors[0].description", equalTo("Internal server error.")))
