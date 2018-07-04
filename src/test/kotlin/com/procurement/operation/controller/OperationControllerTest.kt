@@ -88,8 +88,9 @@ class OperationControllerTest {
             .apply<StandaloneMockMvcBuilder>(
                 MockMvcRestDocumentation.documentationConfiguration(restDocumentation)
                     .uris()
-                    .withScheme("https")
-                    .withHost("eprocurement.systems")
+                    .withScheme("http")
+                    .withHost("operations.eprocurement.systems")
+                    .withPort(80)
                     .and()
                     .snippets()
                     .and()
