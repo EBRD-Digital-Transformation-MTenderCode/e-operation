@@ -3,9 +3,9 @@ server:
 
 spring:
   application:
-    name: e-operation
+    name: operation
 
   cloud:
     config:
       failFast: true
-      name: e-operation
+      name: operation
