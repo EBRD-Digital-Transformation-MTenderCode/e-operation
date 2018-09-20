@@ -48,7 +48,7 @@ class FormsServiceImpl(private val webClientBuilder: WebClient.Builder) : FormsS
         return values[0]
     }
 
-    private fun genUri(queryParams: FormParameters) = UriComponentsBuilder.fromHttpUrl("http://E-FORMS")
+    private fun genUri(queryParams: FormParameters) = UriComponentsBuilder.fromHttpUrl("http://forms:8080")
         .pathSegment("forms")
         .pathSegment(queryParams.form)
         .queryParams(queryParams.parameters)
