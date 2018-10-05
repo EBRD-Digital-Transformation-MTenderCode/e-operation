@@ -7,7 +7,6 @@ import com.procurement.operation.service.JwtService
 import com.procurement.operation.service.JwtServiceImpl
 import com.procurement.operation.service.OperationService
 import com.procurement.operation.service.OperationServiceImpl
-import org.springframework.cloud.client.loadbalancer.LoadBalanced
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.web.client.RestTemplate
@@ -22,7 +21,6 @@ class ServiceConfiguration(private val operationDao: OperationDao) {
         OperationServiceImpl(jwtService = jwtService(), operationDao = operationDao)
 
     @Bean
-    @LoadBalanced
     fun loadBalancedWebClientBuilder(): RestTemplate = RestTemplate()
 
     @Bean
