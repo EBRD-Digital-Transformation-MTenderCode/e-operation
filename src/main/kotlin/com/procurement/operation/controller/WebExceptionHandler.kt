@@ -255,7 +255,7 @@ class WebExceptionHandler : ResponseEntityExceptionHandler() {
     }
 
     @ExceptionHandler(value = [FormsException::class])
-    fun remoteService(exception: FormsException): ResponseEntity<*> {
+    fun formsException(exception: FormsException): ResponseEntity<*> {
         log.error(exception.message, exception)
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST.value())
@@ -276,7 +276,7 @@ class WebExceptionHandler : ResponseEntityExceptionHandler() {
     // *******************************
     @ExceptionHandler(value = [RemoteServiceException::class])
     fun remoteService(exception: RemoteServiceException): ResponseEntity<*> {
-        log.error(exception.message, exception)
+        log.error(exception.message)
 
         return ResponseEntity.status(exception.code ?: HttpStatus.INTERNAL_SERVER_ERROR)
             .body(exception.payload)

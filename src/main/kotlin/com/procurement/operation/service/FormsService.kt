@@ -4,6 +4,7 @@ import com.procurement.operation.exception.FormsException
 import com.procurement.operation.exception.client.RemoteServiceException
 import org.springframework.util.LinkedMultiValueMap
 import org.springframework.util.MultiValueMap
+import org.springframework.web.client.HttpClientErrorException
 import org.springframework.web.client.RestTemplate
 import org.springframework.web.util.UriComponentsBuilder
 import java.net.URI
@@ -57,29 +58,19 @@ class FormsServiceImpl(private val webClient: RestTemplate) : FormsService {
         .queryParams(queryParams.parameters)
         .build(emptyMap<String, Any>())
 
-    private fun remoteService(uri: URI): String? {
-        val response = doRemoteRequest(uri)
-        return when {
-            response.statusCode.is4xxClientError -> {
-                throw RemoteServiceException(
-                    code = response.statusCode,
-                    payload = response.body,
-                    message = "Client error of remote service by uri: '$uri'."
-                )
-            }
-            response.statusCode.is5xxServerError -> {
-                throw RemoteServiceException(
-                    code = response.statusCode,
-                    payload = response.body,
-                    message = "Server error of remote service by uri: '$uri'."
-                )
-            }
-            else -> response.body
-        }
-    }
+    private fun remoteService(uri: URI) = try {
+        webClient.getForEntity(uri, String::class.java).body
+    } catch (exception: HttpClientErrorException) {
+        val code = exception.statusCode
+        val payload = exception.responseBodyAsString
+        val message = "Error [$code:$payload] of remote service by uri: '$uri'."
 
-    private fun doRemoteRequest(uri: URI) = try {
-        webClient.getForEntity(uri, String::class.java)
+        throw RemoteServiceException(
+            code = code,
+            payload = payload,
+            message = message,
+            exception = exception
+        )
     } catch (exception: Exception) {
         throw RemoteServiceException(
             message = "Error of remote service by uri: '$uri'.",

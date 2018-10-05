@@ -17,6 +17,7 @@ import org.mockito.ArgumentCaptor
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.mock.web.MockHttpServletRequest
+import org.springframework.web.client.HttpClientErrorException
 import org.springframework.web.client.RestTemplate
 import java.net.URI
 
@@ -111,12 +112,11 @@ class FormsServiceTest {
         request.addParameter(PARAM_FORM_NAME, FORM_NAME)
         request.addParameter(PARAM_LANG_NAME, LANG)
 
-        val response = ResponseEntity.status(HttpStatus.BAD_REQUEST).body("")
         whenever(webClient.getForEntity(any<URI>(), eq(String::class.java)))
-            .thenReturn(response)
+            .thenThrow(HttpClientErrorException(HttpStatus.BAD_REQUEST))
 
         assertEquals(
-            "Client error of remote service by uri: '$URL'.",
+            "Error [400:] of remote service by uri: '$URL'.",
             assertThrows<RemoteServiceException> {
                 service.getForms(request)
             }.message
@@ -136,12 +136,11 @@ class FormsServiceTest {
         request.addParameter(PARAM_FORM_NAME, FORM_NAME)
         request.addParameter(PARAM_LANG_NAME, LANG)
 
-        val response = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("")
         whenever(webClient.getForEntity(any<URI>(), eq(String::class.java)))
-            .thenReturn(response)
+            .thenThrow(HttpClientErrorException(HttpStatus.INTERNAL_SERVER_ERROR))
 
         assertEquals(
-            "Server error of remote service by uri: '$URL'.",
+            "Error [500:] of remote service by uri: '$URL'.",
             assertThrows<RemoteServiceException> {
                 service.getForms(request)
             }.message
