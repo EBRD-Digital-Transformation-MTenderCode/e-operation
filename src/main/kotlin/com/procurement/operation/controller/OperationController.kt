@@ -6,8 +6,6 @@ import com.procurement.operation.model.AUTHORIZATION_HEADER_NAME
 import com.procurement.operation.model.OPERATION_ID_HEADER_NAME
 import com.procurement.operation.service.FormsService
 import com.procurement.operation.service.OperationService
-import kotlinx.coroutines.experimental.runBlocking
-import org.jetbrains.annotations.NotNull
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.RequestHeader
@@ -24,8 +22,7 @@ class OperationController(
 ) {
     @RequestMapping(method = [RequestMethod.POST], produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun startOperation(
-        @NotNull request: HttpServletRequest,
-        @NotNull
+        request: HttpServletRequest,
         @RequestHeader(
             value = AUTHORIZATION_HEADER_NAME,
             required = false,
@@ -33,41 +30,22 @@ class OperationController(
         ) authorizationHeader: String): ResponseEntity<String> {
 
         val token = getBearerTokenByAuthHeader(authorizationHeader)
-        val form = runBlocking { formsService.getForms(request) }
+        val form = formsService.getForms(request)
         val operationId = operationService.getOperationId(token)
 
         return if (form == null)
-            ResponseEntity.ok(
-                """
-            {
-                "data": {
-                  "operationId": "$operationId"
-                }
-            }
-            """.trimIndent()
-            )
+            ResponseEntity.ok("{\n  \"data\": {\n    \"operationId\": \"$operationId\"\n  }\n}")
         else
-            ResponseEntity.ok(
-                """
-            {
-                "data": {
-                  "operationId": "$operationId",
-                  "form": $form
-                }
-            }
-            """.trimIndent()
-            )
+            ResponseEntity.ok("{\n  \"data\": {\n    \"operationId\": \"$operationId\",\n    \"form\": $form\n  }\n}")
     }
 
-    @RequestMapping("/check", method = [RequestMethod.GET]/*, produces = [MediaType.APPLICATION_JSON_UTF8_VALUE]*/)
+    @RequestMapping("/check", method = [RequestMethod.GET])
     fun checkOperationId(
-        @NotNull
         @RequestHeader(
             value = AUTHORIZATION_HEADER_NAME,
             required = false,
             defaultValue = ""
         ) authorizationHeader: String,
-        @NotNull
         @RequestHeader(
             value = OPERATION_ID_HEADER_NAME,
             required = false,

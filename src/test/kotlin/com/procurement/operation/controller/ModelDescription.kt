@@ -18,6 +18,14 @@ object ModelDescription {
                 getFieldDescriptor("data.operationId", "The operation id.")
             )
         }
+
+        fun responseWithFormSuccessful(): List<FieldDescriptor> {
+            return listOf(
+                getFieldDescriptor("data", "The data of response."),
+                getFieldDescriptor("data.operationId", "The operation id."),
+                getFieldDescriptor("data.form", "The form.")
+            )
+        }
     }
 
     fun responseError(): List<FieldDescriptor> {

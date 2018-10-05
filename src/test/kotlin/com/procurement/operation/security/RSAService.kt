@@ -61,13 +61,13 @@ class RSAServiceImpl(private val keyFactoryService: KeyFactoryService) : RSAServ
     private fun formatBody(body: String) = body.replace(NEW_LINE_PATTERN.toRegex(), "").trim { it <= ' ' }
 
     companion object {
-        private val RSA_ALGORITHM = "RSA"
-        private val BEGIN_PUBLIC_KEY = "-----BEGIN PUBLIC KEY-----"
-        private val END_PUBLIC_KEY = "-----END PUBLIC KEY-----"
-        private val BEGIN_PRIVATE_KEY = "-----BEGIN PRIVATE KEY-----"
-        private val END_PRIVATE_KEY = "-----END PRIVATE KEY-----"
-        private val NEW_LINE_PATTERN = "[\r\n]"
-        private val INVALID_PUBLIC_KEY_FORMAT_MSG = "Invalid public key format."
-        private val INVALID_PRIVATE_KEY_FORMAT_MSG = "Invalid private key format."
+        private const val RSA_ALGORITHM = "RSA"
+        private const val BEGIN_PUBLIC_KEY = "-----BEGIN PUBLIC KEY-----"
+        private const val END_PUBLIC_KEY = "-----END PUBLIC KEY-----"
+        private const val BEGIN_PRIVATE_KEY = "-----BEGIN PRIVATE KEY-----"
+        private const val END_PRIVATE_KEY = "-----END PRIVATE KEY-----"
+        private const val NEW_LINE_PATTERN = "[\r\n]"
+        private const val INVALID_PUBLIC_KEY_FORMAT_MSG = "Invalid public key format."
+        private const val INVALID_PRIVATE_KEY_FORMAT_MSG = "Invalid private key format."
     }
 }

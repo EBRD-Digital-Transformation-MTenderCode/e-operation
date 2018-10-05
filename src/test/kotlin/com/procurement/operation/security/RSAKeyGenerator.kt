@@ -58,11 +58,11 @@ class RSAKeyGenerator {
     }
 
     companion object {
-        private val ALGORITHM = "RSA"
-        private val BEGIN_PUBLIC_KEY = "-----BEGIN PUBLIC KEY-----"
-        private val END_PUBLIC_KEY = "-----END PUBLIC KEY-----"
-        private val BEGIN_PRIVATE_KEY = "-----BEGIN PRIVATE KEY-----"
-        private val END_PRIVATE_KEY = "-----END PRIVATE KEY-----"
-        private val NEW_LINE_PATTERN = "\n"
+        private const val ALGORITHM = "RSA"
+        private const val BEGIN_PUBLIC_KEY = "-----BEGIN PUBLIC KEY-----"
+        private const val END_PUBLIC_KEY = "-----END PUBLIC KEY-----"
+        private const val BEGIN_PRIVATE_KEY = "-----BEGIN PRIVATE KEY-----"
+        private const val END_PRIVATE_KEY = "-----END PRIVATE KEY-----"
+        private const val NEW_LINE_PATTERN = "\n"
     }
 }

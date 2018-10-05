@@ -10,7 +10,7 @@ import com.procurement.operation.service.OperationServiceImpl
 import org.springframework.cloud.client.loadbalancer.LoadBalanced
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.web.reactive.function.client.WebClient
+import org.springframework.web.client.RestTemplate
 
 @Configuration
 class ServiceConfiguration(private val operationDao: OperationDao) {
@@ -23,9 +23,9 @@ class ServiceConfiguration(private val operationDao: OperationDao) {
 
     @Bean
     @LoadBalanced
-    fun loadBalancedWebClientBuilder(): WebClient.Builder = WebClient.builder()
+    fun loadBalancedWebClientBuilder(): RestTemplate = RestTemplate()
 
     @Bean
     fun formsService(): FormsService =
-        FormsServiceImpl(webClientBuilder = loadBalancedWebClientBuilder())
+        FormsServiceImpl(webClient = loadBalancedWebClientBuilder())
 }

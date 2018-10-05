@@ -35,8 +35,8 @@ class WebExceptionHandler : ResponseEntityExceptionHandler() {
     // * Handlers for header *
     // ***********************
     @ExceptionHandler(value = [NoSuchAuthHeaderException::class])
-    fun noSuchAuthHeader(e: NoSuchAuthHeaderException): ResponseEntity<ErrorRS> {
-        log.warn(e.message)
+    fun noSuchAuthHeader(exception: NoSuchAuthHeaderException): ResponseEntity<ErrorRS> {
+        log.warn(exception.message)
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED.value())
             .header(WWW_AUTHENTICATE_HEADER_NAME, BEARER_REALM)
             .body(
@@ -52,8 +52,8 @@ class WebExceptionHandler : ResponseEntityExceptionHandler() {
     }
 
     @ExceptionHandler(value = [InvalidAuthHeaderTypeException::class])
-    fun invalidAuthHeaderType(e: InvalidAuthHeaderTypeException): ResponseEntity<ErrorRS> {
-        log.warn(e.message)
+    fun invalidAuthHeaderType(exception: InvalidAuthHeaderTypeException): ResponseEntity<ErrorRS> {
+        log.warn(exception.message)
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED.value())
             .header(WWW_AUTHENTICATE_HEADER_NAME, BEARER_REALM)
             .body(
@@ -72,8 +72,8 @@ class WebExceptionHandler : ResponseEntityExceptionHandler() {
     // * Handlers for token *
     // **********************
     @ExceptionHandler(value = [EmptyAuthTokenException::class])
-    fun emptyAuthToken(e: EmptyAuthTokenException): ResponseEntity<ErrorRS> {
-        log.warn(e.message)
+    fun emptyAuthToken(exception: EmptyAuthTokenException): ResponseEntity<ErrorRS> {
+        log.warn(exception.message)
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED.value())
             .header(WWW_AUTHENTICATE_HEADER_NAME, BEARER_REALM)
             .body(
@@ -89,8 +89,8 @@ class WebExceptionHandler : ResponseEntityExceptionHandler() {
     }
 
     @ExceptionHandler(value = [InvalidAuthTokenException::class])
-    fun invalidAuthToken(e: InvalidAuthTokenException): ResponseEntity<ErrorRS> {
-        log.warn(e.message)
+    fun invalidAuthToken(exception: InvalidAuthTokenException): ResponseEntity<ErrorRS> {
+        log.warn(exception.message)
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED.value())
             .header(
                 WWW_AUTHENTICATE_HEADER_NAME,
@@ -109,8 +109,8 @@ class WebExceptionHandler : ResponseEntityExceptionHandler() {
     }
 
     @ExceptionHandler(value = [InvalidTokenTypeException::class])
-    fun invalidTokenType(e: InvalidTokenTypeException): ResponseEntity<ErrorRS> {
-        log.warn(e.message)
+    fun invalidTokenType(exception: InvalidTokenTypeException): ResponseEntity<ErrorRS> {
+        log.warn(exception.message)
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED.value())
             .header(
                 WWW_AUTHENTICATE_HEADER_NAME,
@@ -129,8 +129,8 @@ class WebExceptionHandler : ResponseEntityExceptionHandler() {
     }
 
     @ExceptionHandler(value = [MissingPlatformIdException::class])
-    fun missingPlatformIdException(e: MissingPlatformIdException): ResponseEntity<ErrorRS> {
-        log.warn(e.message)
+    fun missingPlatformIdException(exception: MissingPlatformIdException): ResponseEntity<ErrorRS> {
+        log.warn(exception.message)
         return ResponseEntity.status(HttpStatus.BAD_REQUEST.value())
             .header(
                 WWW_AUTHENTICATE_HEADER_NAME,
@@ -149,8 +149,8 @@ class WebExceptionHandler : ResponseEntityExceptionHandler() {
     }
 
     @ExceptionHandler(value = [InvalidPlatformIdException::class])
-    fun invalidPlatformIdException(e: InvalidPlatformIdException): ResponseEntity<ErrorRS> {
-        log.warn(e.message)
+    fun invalidPlatformIdException(exception: InvalidPlatformIdException): ResponseEntity<ErrorRS> {
+        log.warn(exception.message)
         return ResponseEntity.status(HttpStatus.BAD_REQUEST.value())
             .header(
                 WWW_AUTHENTICATE_HEADER_NAME,
@@ -172,8 +172,8 @@ class WebExceptionHandler : ResponseEntityExceptionHandler() {
     // * Handlers for operation *
     // **************************
     @ExceptionHandler(value = [MissingOperationIdException::class])
-    fun missingOperationIdException(e: MissingOperationIdException): ResponseEntity<ErrorRS> {
-        log.warn(e.message)
+    fun missingOperationIdException(exception: MissingOperationIdException): ResponseEntity<ErrorRS> {
+        log.warn(exception.message)
         return ResponseEntity.status(HttpStatus.BAD_REQUEST.value())
             .body(
                 ErrorRS(
@@ -188,8 +188,8 @@ class WebExceptionHandler : ResponseEntityExceptionHandler() {
     }
 
     @ExceptionHandler(value = [InvalidOperationIdException::class])
-    fun invalidOperationIdException(e: InvalidOperationIdException): ResponseEntity<ErrorRS> {
-        log.warn(e.message)
+    fun invalidOperationIdException(exception: InvalidOperationIdException): ResponseEntity<ErrorRS> {
+        log.warn(exception.message)
         return ResponseEntity.status(HttpStatus.BAD_REQUEST.value())
             .body(
                 ErrorRS(
@@ -204,8 +204,8 @@ class WebExceptionHandler : ResponseEntityExceptionHandler() {
     }
 
     @ExceptionHandler(value = [UnknownOperationException::class])
-    fun unknownOperation(e: UnknownOperationException): ResponseEntity<ErrorRS> {
-        log.warn(e.message)
+    fun unknownOperation(exception: UnknownOperationException): ResponseEntity<ErrorRS> {
+        log.warn(exception.message)
         return ResponseEntity.status(HttpStatus.NOT_FOUND.value())
             .body(
                 ErrorRS(
@@ -223,8 +223,8 @@ class WebExceptionHandler : ResponseEntityExceptionHandler() {
     // * Handlers for database *
     // *************************
     @ExceptionHandler(value = [SaveOperationException::class])
-    fun persistenceException(e: SaveOperationException): ResponseEntity<ErrorRS> {
-        log.warn(e.message)
+    fun persistenceException(exception: SaveOperationException): ResponseEntity<ErrorRS> {
+        log.error(exception.message)
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR.value())
             .body(
                 ErrorRS(
@@ -239,8 +239,8 @@ class WebExceptionHandler : ResponseEntityExceptionHandler() {
     }
 
     @ExceptionHandler(value = [ReadOperationException::class])
-    fun persistenceException(e: ReadOperationException): ResponseEntity<ErrorRS> {
-        log.warn(e.message)
+    fun persistenceException(exception: ReadOperationException): ResponseEntity<ErrorRS> {
+        log.error(exception.message, exception)
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR.value())
             .body(
                 ErrorRS(
@@ -256,7 +256,7 @@ class WebExceptionHandler : ResponseEntityExceptionHandler() {
 
     @ExceptionHandler(value = [FormsException::class])
     fun remoteService(exception: FormsException): ResponseEntity<*> {
-        log.error(exception.message)
+        log.error(exception.message, exception)
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST.value())
             .body(
@@ -271,11 +271,14 @@ class WebExceptionHandler : ResponseEntityExceptionHandler() {
             )
     }
 
+    // *******************************
+    // * Handlers for remote service *
+    // *******************************
     @ExceptionHandler(value = [RemoteServiceException::class])
     fun remoteService(exception: RemoteServiceException): ResponseEntity<*> {
-        log.error(exception.message)
+        log.error(exception.message, exception)
 
-        return ResponseEntity.status(exception.code)
+        return ResponseEntity.status(exception.code ?: HttpStatus.INTERNAL_SERVER_ERROR)
             .body(exception.payload)
     }
 }

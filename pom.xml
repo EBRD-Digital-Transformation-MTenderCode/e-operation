@@ -88,10 +88,6 @@
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-webflux</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-configuration-processor</artifactId>
             <optional>true</optional>
         </dependency>
@@ -136,16 +132,6 @@
             <groupId>org.jetbrains.kotlin</groupId>
             <artifactId>kotlin-annotation-processing-maven</artifactId>
             <version>${kotlin.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.jetbrains.kotlinx</groupId>
-            <artifactId>kotlinx-coroutines-jdk8</artifactId>
-            <version>${kotlin-coroutines.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.jetbrains.kotlinx</groupId>
-            <artifactId>kotlinx-coroutines-reactor</artifactId>
-            <version>${kotlin-coroutines.version}</version>
         </dependency>
 
         <!--Jackson-->
@@ -290,7 +276,6 @@
                 <configuration>
                     <args>
                         <arg>-Xjsr305=strict</arg>
-                        <arg>-Xcoroutines=enable</arg>
                     </args>
                     <jvmTarget>1.8</jvmTarget>
                     <compilerPlugins>

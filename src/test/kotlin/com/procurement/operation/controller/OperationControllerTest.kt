@@ -11,9 +11,11 @@ import com.procurement.operation.INVALID_ACCESS_TOKEN
 import com.procurement.operation.INVALID_OPERATION_ID
 import com.procurement.operation.OPERATION_ID
 import com.procurement.operation.REFRESH_TOKEN
+import com.procurement.operation.exception.FormsException
 import com.procurement.operation.exception.InvalidOperationIdException
 import com.procurement.operation.exception.InvalidPlatformIdException
 import com.procurement.operation.exception.UnknownOperationException
+import com.procurement.operation.exception.client.RemoteServiceException
 import com.procurement.operation.exception.database.ReadOperationException
 import com.procurement.operation.exception.database.SaveOperationException
 import com.procurement.operation.exception.token.InvalidAuthTokenException
@@ -38,6 +40,7 @@ import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
+import org.springframework.http.HttpStatus
 import org.springframework.restdocs.RestDocumentationContextProvider
 import org.springframework.restdocs.RestDocumentationExtension
 import org.springframework.restdocs.headers.HeaderDocumentation
@@ -104,9 +107,13 @@ class OperationControllerTest {
     @Nested
     inner class StartOperation {
         private val URL = "/operations"
+        private val FORM_DATA = "form_data"
+        private val FORM_JSON = """"$FORM_DATA""""
+        private val PARAM_FORM_NAME = "form"
+        private val FORM_NAME = "cn"
 
         @Test
-        @DisplayName("The check the operation was successful")
+        @DisplayName("The start operation was successful")
         fun startOperation() {
             val token = genAccessJWT(algorithm)
             val authHeaderValue = AUTHORIZATION_PREFIX_BEARER + token
@@ -120,6 +127,7 @@ class OperationControllerTest {
                 .andExpect(MockMvcResultMatchers.status().isOk)
                 .andExpect(MockMvcResultMatchers.content().contentType("application/json;charset=UTF-8"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.data.operationId", equalTo(OPERATION_ID.toString())))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.form").doesNotExist())
                 .andDo(
                     document(
                         "start/success",
@@ -130,6 +138,111 @@ class OperationControllerTest {
                         responseFields(ModelDescription.Start.responseSuccessful())
                     )
                 )
+        }
+
+        @Test
+        @DisplayName("The start operation with form was successful")
+        fun startOperationWithForm() {
+            val token = genAccessJWT(algorithm)
+            val authHeaderValue = AUTHORIZATION_PREFIX_BEARER + token
+
+            whenever(operationService.getOperationId(token))
+                .thenReturn(OPERATION_ID)
+
+            whenever(formsService.getForms(any()))
+                .thenReturn(FORM_JSON)
+
+            mockMvc.perform(
+                post(URL)
+                    .header(AUTHORIZATION_HEADER_NAME, authHeaderValue))
+                .andExpect(MockMvcResultMatchers.status().isOk)
+                .andExpect(MockMvcResultMatchers.content().contentType("application/json;charset=UTF-8"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.operationId", equalTo(OPERATION_ID.toString())))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.form", equalTo(FORM_DATA)))
+                .andDo(
+                    document(
+                        "start/success_with_form",
+                        requestHeaders(
+                            headerWithName(AUTHORIZATION_HEADER_NAME)
+                                .description("Bearer auth credentials.")
+                        ),
+                        responseFields(ModelDescription.Start.responseWithFormSuccessful())
+                    )
+                )
+        }
+
+        @Test
+        @DisplayName("Invalid query parameters")
+        fun formsException() {
+            val token = genAccessJWT(algorithm)
+            val authHeaderValue = AUTHORIZATION_PREFIX_BEARER + token
+
+            doThrow(FormsException(""))
+                .whenever(formsService).getForms(any())
+
+            mockMvc.perform(
+                post(URL)
+                    .header(AUTHORIZATION_HEADER_NAME, authHeaderValue)
+                    .header(PARAM_FORM_NAME, FORM_NAME)
+                    .header(PARAM_FORM_NAME, FORM_NAME))
+                .andExpect(status().isBadRequest)
+                .andExpect(content().contentType("application/json;charset=UTF-8"))
+                .andExpect(jsonPath("$.errors.length()", equalTo(1)))
+                .andExpect(jsonPath("$.errors[0].code", equalTo("request.form.invalid")))
+                .andExpect(jsonPath("$.errors[0].description", equalTo("Invalid value of query parameter - 'form'.")))
+                .andDo(
+                    document(
+                        "start/errors/invalid_parameter_form",
+                        responseFields(ModelDescription.responseError())
+                    )
+                )
+        }
+
+        @Test
+        @DisplayName("Error of WebClient of remote service")
+        fun externalWebClientError() {
+            val token = genAccessJWT(algorithm)
+            val authHeaderValue = AUTHORIZATION_PREFIX_BEARER + token
+
+            doThrow(
+                RemoteServiceException(
+                    code = HttpStatus.BAD_REQUEST,
+                    payload = "payload of error",
+                    message = "Error"
+                ))
+                .whenever(formsService)
+                .getForms(any())
+
+            mockMvc.perform(
+                post(URL)
+                    .header(AUTHORIZATION_HEADER_NAME, authHeaderValue)
+                    .header(PARAM_FORM_NAME, FORM_NAME))
+                .andExpect(status().isBadRequest)
+                .andExpect(content().contentType("application/json;charset=UTF-8"))
+                .andExpect(content().string("payload of error"))
+        }
+
+        @Test
+        @DisplayName("Error of WebClient")
+        fun internalWebClientError() {
+            val token = genAccessJWT(algorithm)
+            val authHeaderValue = AUTHORIZATION_PREFIX_BEARER + token
+
+            doThrow(
+                RemoteServiceException(
+                    payload = "payload of error",
+                    message = "Error"
+                ))
+                .whenever(formsService)
+                .getForms(any())
+
+            mockMvc.perform(
+                post(URL)
+                    .header(AUTHORIZATION_HEADER_NAME, authHeaderValue)
+                    .header(PARAM_FORM_NAME, FORM_NAME))
+                .andExpect(status().isInternalServerError)
+                .andExpect(content().contentType("application/json;charset=UTF-8"))
+                .andExpect(content().string("payload of error"))
         }
 
         @Test
