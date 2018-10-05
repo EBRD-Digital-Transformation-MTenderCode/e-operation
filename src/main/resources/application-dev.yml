@@ -1,0 +1,12 @@
+spring:
+  cloud:
+    inetutils:
+      preferredNetworks:
+        - 192.168
+
+cassandra:
+  contact-points: localhost
+  keyspace-name: ocds
+  port: 9042
+  username:
+  password:
