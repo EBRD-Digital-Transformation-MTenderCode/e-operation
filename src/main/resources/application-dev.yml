@@ -10,3 +10,32 @@ cassandra:
   port: 9042
   username:
   password:
+
+
+management:
+  endpoints:
+#    jmx:
+#      domain: com.procurement.operation
+    jmx:
+      exposure:
+        exclude: "*"
+    web:
+      exposure:
+        include: "prometheus, metrics"
+#
+  metrics:
+    distribution:
+      percentiles-histogram:
+        http:
+          server:
+            requests: true
+      sla:
+        http:
+          server:
+            requests: 1ms,5ms
+#    export:
+#      jvm:
+#        enabled: true
+#    enable:
+#      jvm: true
+

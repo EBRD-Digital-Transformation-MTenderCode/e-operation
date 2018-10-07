@@ -6,6 +6,7 @@ import com.procurement.operation.model.AUTHORIZATION_HEADER_NAME
 import com.procurement.operation.model.OPERATION_ID_HEADER_NAME
 import com.procurement.operation.service.FormsService
 import com.procurement.operation.service.OperationService
+import io.micrometer.core.annotation.Timed
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.RequestHeader
@@ -16,6 +17,7 @@ import javax.servlet.http.HttpServletRequest
 
 @RestController
 @RequestMapping("/operations")
+@Timed
 class OperationController(
     private val operationService: OperationService,
     private val formsService: FormsService
