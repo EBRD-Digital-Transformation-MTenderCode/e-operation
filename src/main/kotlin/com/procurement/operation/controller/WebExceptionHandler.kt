@@ -15,6 +15,7 @@ import com.procurement.operation.exception.token.InvalidAuthTokenException
 import com.procurement.operation.exception.token.InvalidTokenTypeException
 import com.procurement.operation.exception.token.MissingPlatformIdException
 import com.procurement.operation.model.BEARER_REALM
+import com.procurement.operation.model.CodesOfErrors
 import com.procurement.operation.model.WWW_AUTHENTICATE_HEADER_NAME
 import com.procurement.operation.model.response.ErrorRS
 import org.slf4j.Logger
@@ -43,7 +44,7 @@ class WebExceptionHandler : ResponseEntityExceptionHandler() {
                 ErrorRS(
                     errors = listOf(
                         ErrorRS.Error(
-                            code = "auth.header.noSuch",
+                            code = CodesOfErrors.AUTH_HEADER_NO_SUCH.code,
                             description = "The authentication header is missing."
                         )
                     )
@@ -60,7 +61,7 @@ class WebExceptionHandler : ResponseEntityExceptionHandler() {
                 ErrorRS(
                     errors = listOf(
                         ErrorRS.Error(
-                            code = "auth.header.invalidType",
+                            code = CodesOfErrors.AUTH_HEADER_INVALID_TYPE.code,
                             description = "Invalid type of the authentication header. Expected type is 'Bearer'."
                         )
                     )
@@ -80,7 +81,7 @@ class WebExceptionHandler : ResponseEntityExceptionHandler() {
                 ErrorRS(
                     errors = listOf(
                         ErrorRS.Error(
-                            code = "auth.token.empty",
+                            code = CodesOfErrors.AUTH_TOKEN_EMPTY.code,
                             description = "The authentication token is empty."
                         )
                     )
@@ -100,7 +101,7 @@ class WebExceptionHandler : ResponseEntityExceptionHandler() {
                 ErrorRS(
                     errors = listOf(
                         ErrorRS.Error(
-                            code = "auth.token.invalid",
+                            code = CodesOfErrors.AUTH_TOKEN_INVALID.code,
                             description = "Invalid the access token."
                         )
                     )
@@ -120,7 +121,7 @@ class WebExceptionHandler : ResponseEntityExceptionHandler() {
                 ErrorRS(
                     errors = listOf(
                         ErrorRS.Error(
-                            code = "auth.token.invalidType",
+                            code = CodesOfErrors.AUTH_TOKEN_INVALID_TYPE.code,
                             description = "Invalid type of the authentication token."
                         )
                     )
@@ -140,7 +141,7 @@ class WebExceptionHandler : ResponseEntityExceptionHandler() {
                 ErrorRS(
                     errors = listOf(
                         ErrorRS.Error(
-                            code = "auth.token.platform.missing",
+                            code = CodesOfErrors.AUTH_TOKEN_PLATFORM_MISSING.code,
                             description = "Missing the platform id."
                         )
                     )
@@ -160,7 +161,7 @@ class WebExceptionHandler : ResponseEntityExceptionHandler() {
                 ErrorRS(
                     errors = listOf(
                         ErrorRS.Error(
-                            code = "auth.token.platform.invalid",
+                            code = CodesOfErrors.AUTH_TOKEN_PLATFORM_INVALID.code,
                             description = "Invalid the platform id."
                         )
                     )
@@ -179,7 +180,7 @@ class WebExceptionHandler : ResponseEntityExceptionHandler() {
                 ErrorRS(
                     errors = listOf(
                         ErrorRS.Error(
-                            code = "operation.missing",
+                            code = CodesOfErrors.OPERATION_MISSING.code,
                             description = "Missing the operation id."
                         )
                     )
@@ -195,7 +196,7 @@ class WebExceptionHandler : ResponseEntityExceptionHandler() {
                 ErrorRS(
                     errors = listOf(
                         ErrorRS.Error(
-                            code = "operation.invalid",
+                            code = CodesOfErrors.OPERATION_INVALID.code,
                             description = "Invalid the operation id."
                         )
                     )
@@ -211,7 +212,7 @@ class WebExceptionHandler : ResponseEntityExceptionHandler() {
                 ErrorRS(
                     errors = listOf(
                         ErrorRS.Error(
-                            code = "operation.unknown",
+                            code = CodesOfErrors.OPERATION_NOT_FOUND.code,
                             description = "Unknown the operation."
                         )
                     )
@@ -230,7 +231,7 @@ class WebExceptionHandler : ResponseEntityExceptionHandler() {
                 ErrorRS(
                     errors = listOf(
                         ErrorRS.Error(
-                            code = "global.internal_server_error",
+                            code = CodesOfErrors.INTERNAL_SERVER_ERROR.code,
                             description = "Internal server error."
                         )
                     )
@@ -246,7 +247,7 @@ class WebExceptionHandler : ResponseEntityExceptionHandler() {
                 ErrorRS(
                     errors = listOf(
                         ErrorRS.Error(
-                            code = "global.internal_server_error",
+                            code = CodesOfErrors.INTERNAL_SERVER_ERROR.code,
                             description = "Internal server error."
                         )
                     )
@@ -263,7 +264,7 @@ class WebExceptionHandler : ResponseEntityExceptionHandler() {
                 ErrorRS(
                     errors = listOf(
                         ErrorRS.Error(
-                            code = "request.form.invalid",
+                            code = CodesOfErrors.REQUEST_FORM_INVALID.code,
                             description = "Invalid value of query parameter - 'form'."
                         )
                     )

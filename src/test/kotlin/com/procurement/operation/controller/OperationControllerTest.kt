@@ -188,7 +188,7 @@ class OperationControllerTest {
                 .andExpect(status().isBadRequest)
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andExpect(jsonPath("$.errors.length()", equalTo(1)))
-                .andExpect(jsonPath("$.errors[0].code", equalTo("request.form.invalid")))
+                .andExpect(jsonPath("$.errors[0].code", equalTo("400.82.05.01")))
                 .andExpect(jsonPath("$.errors[0].description", equalTo("Invalid value of query parameter - 'form'.")))
                 .andDo(
                     document(
@@ -258,7 +258,7 @@ class OperationControllerTest {
                 .andExpect(header().string(WWW_AUTHENTICATE_HEADER_NAME, wwwAuthHeaderValue))
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andExpect(jsonPath("$.errors.length()", equalTo(1)))
-                .andExpect(jsonPath("$.errors[0].code", equalTo("auth.header.noSuch")))
+                .andExpect(jsonPath("$.errors[0].code", equalTo("401.82.02.01")))
                 .andExpect(
                     jsonPath(
                         "$.errors[0].description",
@@ -292,7 +292,7 @@ class OperationControllerTest {
                 .andExpect(header().string(WWW_AUTHENTICATE_HEADER_NAME, wwwAuthHeaderValue))
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andExpect(jsonPath("$.errors.length()", equalTo(1)))
-                .andExpect(jsonPath("$.errors[0].code", equalTo("auth.header.invalidType")))
+                .andExpect(jsonPath("$.errors[0].code", equalTo("401.82.02.02")))
                 .andExpect(
                     jsonPath(
                         "$.errors[0].description",
@@ -326,7 +326,7 @@ class OperationControllerTest {
                 .andExpect(header().string(WWW_AUTHENTICATE_HEADER_NAME, wwwAuthHeaderValue))
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andExpect(jsonPath("$.errors.length()", equalTo(1)))
-                .andExpect(jsonPath("$.errors[0].code", equalTo("auth.token.empty")))
+                .andExpect(jsonPath("$.errors[0].code", equalTo("401.82.03.01")))
                 .andExpect(jsonPath("$.errors[0].description", equalTo("The authentication token is empty.")))
                 .andDo(
                     document(
@@ -361,7 +361,7 @@ class OperationControllerTest {
                 .andExpect(header().string(WWW_AUTHENTICATE_HEADER_NAME, wwwAuthHeaderValue))
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andExpect(jsonPath("$.errors.length()", equalTo(1)))
-                .andExpect(jsonPath("$.errors[0].code", equalTo("auth.token.invalidType")))
+                .andExpect(jsonPath("$.errors[0].code", equalTo("401.82.03.02")))
                 .andExpect(
                     jsonPath(
                         "$.errors[0].description",
@@ -401,7 +401,7 @@ class OperationControllerTest {
                 .andExpect(header().string(WWW_AUTHENTICATE_HEADER_NAME, wwwAuthHeaderValue))
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andExpect(jsonPath("$.errors.length()", equalTo(1)))
-                .andExpect(jsonPath("$.errors[0].code", equalTo("auth.token.invalid")))
+                .andExpect(jsonPath("$.errors[0].code", equalTo("401.82.03.06")))
                 .andExpect(
                     jsonPath(
                         "$.errors[0].description",
@@ -441,7 +441,7 @@ class OperationControllerTest {
                 .andExpect(header().string(WWW_AUTHENTICATE_HEADER_NAME, wwwAuthHeaderValue))
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andExpect(jsonPath("$.errors.length()", equalTo(1)))
-                .andExpect(jsonPath("$.errors[0].code", equalTo("auth.token.platform.missing")))
+                .andExpect(jsonPath("$.errors[0].code", equalTo("400.82.03.07")))
                 .andExpect(jsonPath("$.errors[0].description", equalTo("Missing the platform id.")))
                 .andDo(
                     document(
@@ -476,7 +476,7 @@ class OperationControllerTest {
                 .andExpect(header().string(WWW_AUTHENTICATE_HEADER_NAME, wwwAuthHeaderValue))
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andExpect(jsonPath("$.errors.length()", equalTo(1)))
-                .andExpect(jsonPath("$.errors[0].code", equalTo("auth.token.platform.invalid")))
+                .andExpect(jsonPath("$.errors[0].code", equalTo("400.82.03.08")))
                 .andExpect(jsonPath("$.errors[0].description", equalTo("Invalid the platform id.")))
                 .andDo(
                     document(
@@ -508,7 +508,7 @@ class OperationControllerTest {
                 .andExpect(status().isInternalServerError)
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andExpect(jsonPath("$.errors.length()", equalTo(1)))
-                .andExpect(jsonPath("$.errors[0].code", equalTo("global.internal_server_error")))
+                .andExpect(jsonPath("$.errors[0].code", equalTo("500.82.00.00")))
                 .andExpect(jsonPath("$.errors[0].description", equalTo("Internal server error.")))
                 .andDo(
                     document(
@@ -559,7 +559,7 @@ class OperationControllerTest {
                 .andExpect(header().string(WWW_AUTHENTICATE_HEADER_NAME, wwwAuthHeaderValue))
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andExpect(jsonPath("$.errors.length()", equalTo(1)))
-                .andExpect(jsonPath("$.errors[0].code", equalTo("auth.header.noSuch")))
+                .andExpect(jsonPath("$.errors[0].code", equalTo("401.82.02.01")))
                 .andExpect(
                     jsonPath(
                         "$.errors[0].description",
@@ -594,7 +594,7 @@ class OperationControllerTest {
                 .andExpect(header().string(WWW_AUTHENTICATE_HEADER_NAME, wwwAuthHeaderValue))
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andExpect(jsonPath("$.errors.length()", equalTo(1)))
-                .andExpect(jsonPath("$.errors[0].code", equalTo("auth.header.invalidType")))
+                .andExpect(jsonPath("$.errors[0].code", equalTo("401.82.02.02")))
                 .andExpect(
                     jsonPath(
                         "$.errors[0].description",
@@ -629,7 +629,7 @@ class OperationControllerTest {
                 .andExpect(header().string(WWW_AUTHENTICATE_HEADER_NAME, wwwAuthHeaderValue))
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andExpect(jsonPath("$.errors.length()", equalTo(1)))
-                .andExpect(jsonPath("$.errors[0].code", equalTo("auth.token.empty")))
+                .andExpect(jsonPath("$.errors[0].code", equalTo("401.82.03.01")))
                 .andExpect(jsonPath("$.errors[0].description", equalTo("The authentication token is empty.")))
                 .andDo(
                     document(
@@ -665,7 +665,7 @@ class OperationControllerTest {
                 .andExpect(header().string(WWW_AUTHENTICATE_HEADER_NAME, wwwAuthHeaderValue))
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andExpect(jsonPath("$.errors.length()", equalTo(1)))
-                .andExpect(jsonPath("$.errors[0].code", equalTo("auth.token.invalidType")))
+                .andExpect(jsonPath("$.errors[0].code", equalTo("401.82.03.02")))
                 .andExpect(
                     jsonPath(
                         "$.errors[0].description",
@@ -706,7 +706,7 @@ class OperationControllerTest {
                 .andExpect(header().string(WWW_AUTHENTICATE_HEADER_NAME, wwwAuthHeaderValue))
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andExpect(jsonPath("$.errors.length()", equalTo(1)))
-                .andExpect(jsonPath("$.errors[0].code", equalTo("auth.token.invalid")))
+                .andExpect(jsonPath("$.errors[0].code", equalTo("401.82.03.06")))
                 .andExpect(
                     jsonPath(
                         "$.errors[0].description",
@@ -747,7 +747,7 @@ class OperationControllerTest {
                 .andExpect(header().string(WWW_AUTHENTICATE_HEADER_NAME, wwwAuthHeaderValue))
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andExpect(jsonPath("$.errors.length()", equalTo(1)))
-                .andExpect(jsonPath("$.errors[0].code", equalTo("auth.token.platform.missing")))
+                .andExpect(jsonPath("$.errors[0].code", equalTo("400.82.03.07")))
                 .andExpect(jsonPath("$.errors[0].description", equalTo("Missing the platform id.")))
                 .andDo(
                     document(
@@ -783,7 +783,7 @@ class OperationControllerTest {
                 .andExpect(header().string(WWW_AUTHENTICATE_HEADER_NAME, wwwAuthHeaderValue))
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andExpect(jsonPath("$.errors.length()", equalTo(1)))
-                .andExpect(jsonPath("$.errors[0].code", equalTo("auth.token.platform.invalid")))
+                .andExpect(jsonPath("$.errors[0].code", equalTo("400.82.03.08")))
                 .andExpect(jsonPath("$.errors[0].description", equalTo("Invalid the platform id.")))
                 .andDo(
                     document(
@@ -810,7 +810,7 @@ class OperationControllerTest {
                 .andExpect(status().isBadRequest)
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andExpect(jsonPath("$.errors.length()", equalTo(1)))
-                .andExpect(jsonPath("$.errors[0].code", equalTo("operation.missing")))
+                .andExpect(jsonPath("$.errors[0].code", equalTo("400.82.04.01")))
                 .andExpect(jsonPath("$.errors[0].description", equalTo("Missing the operation id.")))
                 .andDo(
                     document(
@@ -840,7 +840,7 @@ class OperationControllerTest {
                 .andExpect(status().isBadRequest)
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andExpect(jsonPath("$.errors.length()", equalTo(1)))
-                .andExpect(jsonPath("$.errors[0].code", equalTo("operation.invalid")))
+                .andExpect(jsonPath("$.errors[0].code", equalTo("400.82.04.02")))
                 .andExpect(jsonPath("$.errors[0].description", equalTo("Invalid the operation id.")))
                 .andDo(
                     document(
@@ -870,7 +870,7 @@ class OperationControllerTest {
                 .andExpect(status().isNotFound)
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andExpect(jsonPath("$.errors.length()", equalTo(1)))
-                .andExpect(jsonPath("$.errors[0].code", equalTo("operation.unknown")))
+                .andExpect(jsonPath("$.errors[0].code", equalTo("404.82.04.03")))
                 .andExpect(jsonPath("$.errors[0].description", equalTo("Unknown the operation.")))
                 .andDo(
                     document(
@@ -900,7 +900,7 @@ class OperationControllerTest {
                 .andExpect(status().isInternalServerError)
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andExpect(jsonPath("$.errors.length()", equalTo(1)))
-                .andExpect(jsonPath("$.errors[0].code", equalTo("global.internal_server_error")))
+                .andExpect(jsonPath("$.errors[0].code", equalTo("500.82.00.00")))
                 .andExpect(jsonPath("$.errors[0].description", equalTo("Internal server error.")))
                 .andDo(
                     document(
