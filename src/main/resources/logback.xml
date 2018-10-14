@@ -59,7 +59,7 @@
         </encoder>
     </appender>
 
-    <logger name="com.procurement.operation" level="WARN" additivity="false">
+    <logger name="com.procurement.operation" level="INFO" additivity="false">
         <appender-ref ref="FILE"/>
         <appender-ref ref="LOGSTASH"/>
         <appender-ref ref="STDOUT"/>
