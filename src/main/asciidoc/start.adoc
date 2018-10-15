@@ -99,10 +99,9 @@ include::../../../target/generated-snippets/start/errors/invalid_auth_token/resp
 include::../../../target/generated-snippets/start/errors/invalid_parameter_form/http-request.adoc[]
 .Response
 include::../../../target/generated-snippets/start/errors/invalid_parameter_form/http-response.adoc[]
-.Response headers
-include::../../../target/generated-snippets/start/errors/invalid_parameter_form/response-headers.adoc[]
 .Response fields
 include::../../../target/generated-snippets/start/errors/invalid_parameter_form/response-fields.adoc[]
+====
 
 === Missing platform id
 

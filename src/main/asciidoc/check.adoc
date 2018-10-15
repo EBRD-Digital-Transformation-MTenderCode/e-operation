@@ -9,9 +9,6 @@ include::../../../target/generated-snippets/check/success/request-headers.adoc[]
 == Response structure
 include::../../../target/generated-snippets/check/success/http-response.adoc[]
 
-== Response fields
-include::../../../target/generated-snippets/check/success/response-fields.adoc[]
-
 == Errors
 === No such the authentication header
 
