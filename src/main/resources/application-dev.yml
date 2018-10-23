@@ -13,6 +13,9 @@ cassandra:
 
 
 management:
+  actuator-security:
+    username: actuator
+    password-hash: "{bcrypt}$2a$10$MSaYg2SejDhqgxY6DcomQeYwQRxrFXJHgdH.UOkDqBDNzHNIUSQr."
   endpoints:
 #    jmx:
 #      domain: com.procurement.operation
@@ -21,7 +24,7 @@ management:
         exclude: "*"
     web:
       exposure:
-        include: "prometheus, metrics"
+        include: "prometheus, metrics, loggers, info"
 #
   metrics:
     distribution:
@@ -38,4 +41,8 @@ management:
 #        enabled: true
 #    enable:
 #      jvm: true
-
+  server:
+    port: 8080
+  info:
+    git:
+      mode: full
