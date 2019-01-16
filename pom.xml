@@ -387,6 +387,7 @@
                         <includeOnlyProperty>^git.build.host$</includeOnlyProperty>
                         <includeOnlyProperty>^git.build.time$</includeOnlyProperty>
                         <includeOnlyProperty>^git.commit.id$</includeOnlyProperty>
+                        <includeOnlyProperty>^git.commit.id.abbrev$</includeOnlyProperty>
                         <includeOnlyProperty>^git.commit.user.email$</includeOnlyProperty>
                         <includeOnlyProperty>^git.tags$</includeOnlyProperty>
                     </includeOnlyProperties>
@@ -472,7 +473,9 @@
                     <images>
                         <image>
                             <registry>${docker-registry}</registry>
-                            <name>${docker-registry}/${project.artifactId}${docker-image-profile}:${project.version}</name>
+                            <name>
+                                ${docker-registry}/${project.artifactId}${docker-image-profile}:${project.version}.${git.commit.id.abbrev}
+                            </name>
                             <build>
                                 <dockerFileDir>${project.basedir}/src/main</dockerFileDir>
                                 <nocache/>
