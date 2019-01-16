@@ -11,38 +11,55 @@ cassandra:
   username:
   password:
 
+health:
+  config:
+    enabled: false
 
 management:
   actuator-security:
     username: actuator
     password-hash: "{bcrypt}$2a$10$MSaYg2SejDhqgxY6DcomQeYwQRxrFXJHgdH.UOkDqBDNzHNIUSQr."
+
+  health:
+    #    diskspace:
+    #      enabled: true
+    db:
+      enabled: true
+    #    refresh:
+    #      enabled: false
+    defaults:
+      enabled: false
+
+  endpoint:
+    health:
+      show-details: always
+
+  #    loggers:
+  #      enabled: true
+
   endpoints:
-#    jmx:
-#      domain: com.procurement.operation
-    jmx:
-      exposure:
-        exclude: "*"
     web:
       exposure:
-        include: "prometheus, metrics, loggers, info"
-#
-  metrics:
-    distribution:
-      percentiles-histogram:
-        http:
-          server:
-            requests: true
-      sla:
-        http:
-          server:
-            requests: 1ms,5ms
-#    export:
-#      jvm:
-#        enabled: true
-#    enable:
-#      jvm: true
-  server:
-    port: 8080
-  info:
-    git:
-      mode: full
+        include: "health,prometheus"
+
+#    jmx:
+#      domain: com.procurement
+#      exposure:
+#        exclude: "*"
+
+#  metrics:
+#    distribution:
+#      percentiles-histogram:
+#        http:
+#          server:
+#            requests: true
+#      sla:
+#        http:
+#          server:
+#            requests: 1ms,5ms
+#  server:
+#    port: 9999
+#  info:
+#    git:
+#      mode: full
+
