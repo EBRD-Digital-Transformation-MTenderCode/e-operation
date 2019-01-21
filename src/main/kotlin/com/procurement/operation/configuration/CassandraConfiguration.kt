@@ -7,8 +7,10 @@ import com.datastax.driver.core.QueryOptions
 import com.datastax.driver.core.Session
 import com.datastax.driver.core.SocketOptions
 import com.procurement.operation.configuration.properties.CassandraProperties
+import com.procurement.operation.infrastructure.metric.CassandraHealthIndicator
 import org.springframework.beans.BeanUtils
 import org.springframework.beans.factory.ObjectProvider
+import org.springframework.boot.actuate.health.HealthIndicator
 import org.springframework.boot.autoconfigure.cassandra.ClusterBuilderCustomizer
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean
@@ -31,6 +33,11 @@ class CassandraConfiguration(
     fun session(): Session =
         cassandraProperties.keyspaceName?.let { cassandraCluster().connect(it) }
             ?: cassandraCluster().connect()
+
+    @Bean
+    fun cassandraHealthIndicator(): HealthIndicator {
+        return CassandraHealthIndicator(session = session())
+    }
 
     private fun cassandraCluster(): Cluster {
         val builder = Cluster.builder()
