@@ -8,8 +8,6 @@ cassandra:
   contact-points: localhost
   keyspace-name: ocds
   port: 9042
-  username:
-  password:
 
 health:
   config:
@@ -18,7 +16,7 @@ health:
 management:
   actuator-security:
     username: actuator
-    password-hash: "{bcrypt}$2a$10$MSaYg2SejDhqgxY6DcomQeYwQRxrFXJHgdH.UOkDqBDNzHNIUSQr."
+    password-hash: "{bcrypt}"
 
   health:
     #    diskspace:
